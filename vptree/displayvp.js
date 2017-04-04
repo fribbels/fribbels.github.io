@@ -45,6 +45,7 @@ window.onload = function() {
             var circle = new Path.Circle(node.vp, node.mu);
             node.circle = circle;
             circle.strokeColor = color;
+            circle.strokeWidth = 2;
             // circle.fillColor = color;
 
             inside = area.intersect(circle);
@@ -53,6 +54,7 @@ window.onload = function() {
             var circle = new Path.Circle(node.vp, node.mu);
             var intersect = area.intersect(circle);
             intersect.strokeColor = color;
+            intersect.strokeWidth = 2;
             // intersect.fillColor = color;
 
             inside = intersect;
