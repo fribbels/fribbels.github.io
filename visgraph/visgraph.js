@@ -255,7 +255,7 @@ function drawPath (event) {
             line.add(endPoint);
             line.add(a);
             line.strokeColor = 'red';
-            line.strokeWidth = 0.5;
+            line.strokeWidth = 1;
             endData.lines.push(line);
             endData.clearEdges.push(a); 
         }
