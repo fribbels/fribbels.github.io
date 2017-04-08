@@ -12,7 +12,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
 var audioContext = new AudioContext();
@@ -25,11 +24,14 @@ var analyserContext = null;
 var canvasWidth, canvasHeight;
 var recIndex = 0;
 
+
+window.onload = initAudio;
 /* TODO:
 
 - offer mono option
 - "Monitor input" switch
 */
+
 
 function saveAudio() {
     audioRecorder.exportWAV( doneEncoding );
@@ -40,7 +42,7 @@ function saveAudio() {
 function gotBuffers( buffers ) {
     var canvas = document.getElementById( "wavedisplay" );
 
-    drawBuffer( canvas.width, canvas.height, canvas.getContext('2d'), buffers[0] );
+    // drawBuffer( canvas.width, canvas.height, canvas.getContext('2d'), buffers[0] );
 
     // the ONLY time gotBuffers is called is right after a new recording is completed - 
     // so here's where we should set up the download.
@@ -86,6 +88,7 @@ function cancelAnalyserUpdates() {
 function updateAnalysers(time) {
     if (!analyserContext) {
         var canvas = document.getElementById("analyser");
+        console.log(2, canvas);
         canvasWidth = canvas.width;
         canvasHeight = canvas.height;
         analyserContext = canvas.getContext('2d');
@@ -166,6 +169,15 @@ function initAudio() {
         if (!navigator.requestAnimationFrame)
             navigator.requestAnimationFrame = navigator.webkitRequestAnimationFrame || navigator.mozRequestAnimationFrame;
 
+
+    var canvas = document.getElementById( "wavedisplay" );
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight - 100;
+    canvas = document.getElementById("analyser");
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight - 100;
+    console.log(canvas);
+
     navigator.getUserMedia(
         {
             "audio": {
@@ -182,5 +194,3 @@ function initAudio() {
             console.log(e);
         });
 }
-
-window.addEventListener('load', initAudio );
