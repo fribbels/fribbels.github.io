@@ -111,19 +111,6 @@ window.onload = function() {
             }
 
             if (dist < currentNode.mu) {
-                // if (lastCircle == undefined) {
-                //     lastCircle = new Path.Circle(currentNode.vp, currentNode.mu);
-                //     lastCircle.strokeColor = new Color(0, 0, 0);
-                //     lastCircle.strokeWidth = width;
-                // } else {
-                //     var newCircle = new Path.Circle(currentNode.vp, currentNode.mu);
-                //     newCircle.strokeColor = new Color(0.7, 0.7, 0.7);
-
-                //     var result = lastCircle.intersect(newCircle);
-                //     result.strokeColor = 'black';
-                //     result.strokeWidth = width-- <= 0 ? 1 : width;
-                //     lastCircle = result;
-                // }
                 if (dist < currentNode.mu + tau) 
                     nodesToVisit.push(currentNode.left);
                 if (dist >= currentNode.mu - tau)

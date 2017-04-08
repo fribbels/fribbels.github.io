@@ -1,0 +1,14 @@
+writeup
+So it's partitioning the plane like a kd tree would.  I suppose that the point of this would be to do some kind of range queries later on.  
+So, yes, I'd like to see some theory about construction time and search time, and why on earth :) this might be better than using straight lines with kd trees.  I think it's really interesting, if it has any advantages.  
+The pseudocode can be shown but I wouldn't prioritize describing it.  I'm more curious about the time complexity of drawing this, because every new circle might have lots of existing objects to avoid cutting through.
+
+At some point if you want to make the demo more interactive, you could display circles one by one, at least for one root-to-leaf path.  Ooh, or the user could select a leaf and you'd show the cuts that correspond to the ancestors of that leaf.  I'm sure there are plenty of other things we could think of.
+
+It would be cool to see what behavior we have with this tree.  I can already think of a weird situation:
+Suppose that you get a first circle, A, and inside you get a complete nested circle, B.  So now within A there are two regions, Bi in B and Bo outside of B.  Now it's possible to get a vantage point in Bo who's circle contains B.
+So it's possible to get nested circles where you don't really have a correspondence to levels in the tree.  It's not as easy to figure out as a kd tree.
+
+Construction time
+Search time
+

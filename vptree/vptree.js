@@ -109,25 +109,6 @@ class DistanceQueue {
     }
 }
 
-// var size = 100;
-// var dataset = new Array(size);
-
-// var timer = new Timer();
-// for (var i = 0; i < size; i++) {
-//     dataset[i] = new Data(Math.random(), Math.random());
-// }
-// console.log(timer.tick());
-
-// timer = new Timer();
-// var root = new VPNode(dataset);
-// var q = new Data(0, 0);
-// console.log(timer.tick());
-
-// timer = new Timer();
-// var nearest = knn(root, 2, q);
-// console.log(timer.tick());
-// console.log(nearest[0]);
-
 function knn (root, k, query) {
     var count = 0;
     var trash = 0;
