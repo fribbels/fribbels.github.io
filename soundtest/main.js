@@ -93,9 +93,9 @@ function updateAnalysers(time) {
 
     // analyzer draw code here
     {
-        var SPACING = 3;
-        var BAR_WIDTH = 1;
-        var numBars = Math.round(canvasWidth / SPACING);
+        var SPACING = 5;
+        var BAR_WIDTH = 2;
+        var numBars = Math.round(canvasWidth / SPACING)*5;
         var freqByteData = new Uint8Array(analyserNode.frequencyBinCount);
 
         analyserNode.getByteFrequencyData(freqByteData); 
@@ -114,8 +114,8 @@ function updateAnalysers(time) {
                 magnitude += freqByteData[offset + j];
             magnitude = magnitude / multiplier;
             var magnitude2 = freqByteData[i * multiplier];
-            analyserContext.fillStyle = "hsl( " + Math.round((i*360)/numBars) + ", 100%, 50%)";
-            analyserContext.fillRect(i * SPACING, canvasHeight, BAR_WIDTH, -magnitude);
+            analyserContext.fillStyle = "hsl( " + Math.round((i*360*5)/numBars) + ", 100%, 50%)";
+            analyserContext.fillRect(i * SPACING, canvasHeight, BAR_WIDTH, -3*magnitude);
         }
     }
     
