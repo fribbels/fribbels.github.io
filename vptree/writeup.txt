@@ -12,3 +12,23 @@ So it's possible to get nested circles where you don't really have a corresponde
 Construction time
 Search time
 
+
+
+Nearest neighbor analysis
+Taking a point, finding points that are closest to it
+Given a database of datapoints, the naive approach is to visit every point and compare it to the query.
+However, binary search is a improvement, allowing search without visitig every node. 
+The bst assumes a sorted database, which takes nlogn time, but the payoff is logarithmic time search.
+
+KD tree
+Recusively bisects a database by making cuts along medians along coordinate values.
+
+VP tree
+Instead of using coordinate values to split, uses distance from a selected vantage point
+Points are split into "inside" the radius and "outside" the radius, and this recursively subdivides the space.
+
+In comparison to KD trees, this uses hypersphere cuts to divide space, whereas kd trees use hyperplanes.
+Construction of the KD tree uses nlogn time and n space.
+
+Downfall of kd trees: higher dimensional space
+as dimension increases, kd trees effectiveness reduces, having to visit nearly all elements in search
