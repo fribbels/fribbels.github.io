@@ -1,6 +1,6 @@
 (function(window){
 
-  var WORKER_PATH = 'https://fribbels.github.io/soundtest/recorderWorker.js';
+  var WORKER_PATH = 'recorderWorker.js';
 
   var Recorder = function(source, cfg){
     var config = cfg || {};
