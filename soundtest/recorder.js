@@ -92,8 +92,14 @@
     var link = document.getElementById("save");
     link.href = url;
     link.download = filename || 'output.wav';
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', 'https://karaokey-server.herokuapp.com/file', true);
+    xhr.setRequestHeader('Content-type','audio/wav');
+    xhr.send(blob);
   }
 
   window.Recorder = Recorder;
 
 })(window);
+//https://karaokey-server.herokuapp.com/submitaudio

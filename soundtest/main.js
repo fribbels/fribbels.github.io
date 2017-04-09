@@ -50,6 +50,7 @@ function gotBuffers( buffers ) {
 }
 
 function doneEncoding( blob ) {
+        console.log("donerecording");
     Recorder.setupDownload( blob, "myRecording" + ((recIndex<10)?"0":"") + recIndex + ".wav" );
     recIndex++;
 }

@@ -1,9 +1,8 @@
 <html>
     <head>
         <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
-        <script>function drawBuffer( width, height, context, data ) {
-}
-</script>
+        <script src="jquery-2.1.3.min.js"></script>
+        <script>function drawBuffer( width, height, context, data ) {}</script>
         <script src="audiodisplay.js"></script>
         <script src="recorderWorker.js"></script>
         <script src="recorder.js"></script>
@@ -19,6 +18,7 @@
     
         <p id="textbox">test2</p>
         <video autoplay></video>
-        <img id="record" src="cat.png" onclick="toggleRecording(this);">
+        <a id="record" onclick="toggleRecording(this);"> RECORD </a>
+        <a id="save"> SAVE </a>
     </body>
 </html>

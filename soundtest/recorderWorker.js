@@ -56,6 +56,7 @@ function record(inputBuffer){
 }
 
 function exportWAV(type){
+        console.log("exportwav");
   var bufferL = mergeBuffers(recBuffersL, recLength);
   var bufferR = mergeBuffers(recBuffersR, recLength);
   var interleaved = interleave(bufferL, bufferR);
@@ -66,6 +67,7 @@ function exportWAV(type){
 }
 
 function exportMonoWAV(type){
+        console.log("exportmonowav");
   var bufferL = mergeBuffers(recBuffersL, recLength);
   var dataview = encodeWAV(bufferL, true);
   var audioBlob = new Blob([dataview], { type: type });
@@ -77,6 +79,7 @@ function getBuffers() {
   var buffers = [];
   buffers.push( mergeBuffers(recBuffersL, recLength) );
   buffers.push( mergeBuffers(recBuffersR, recLength) );
+        console.log("getbuffers large arrays");
   this.postMessage(buffers);
 }
 
@@ -87,6 +90,7 @@ function clear(){
 }
 
 function mergeBuffers(recBuffers, recLength){
+        console.log("mergebuffers");
   var result = new Float32Array(recLength);
   var offset = 0;
   for (var i = 0; i < recBuffers.length; i++){
@@ -125,6 +129,7 @@ function writeString(view, offset, string){
 }
 
 function encodeWAV(samples, mono){
+        console.log("encodewav");
   var buffer = new ArrayBuffer(44 + samples.length * 2);
   var view = new DataView(buffer);
 
