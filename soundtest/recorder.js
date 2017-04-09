@@ -97,6 +97,16 @@
     xhr.open('POST', 'https://karaokey-server.herokuapp.com/file', true);
     xhr.setRequestHeader('Content-type','audio/wav');
     xhr.send(blob);
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === 4) {
+        var response = JSON.parse(xhr.response);
+        console.log("GOOGLE RESPONSE: " + document.getElementById('textbox').innerHTML)
+        console.log(response);
+        if (response != null && response.results != undefined) {
+          document.getElementById('textbox').innerHTML = response.results[0].alternatives[0].transcript + " [" + response.results[0].alternatives[0].confidence + "]";
+        }
+      }
+    }
   }
 
   window.Recorder = Recorder;
