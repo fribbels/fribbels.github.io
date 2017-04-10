@@ -102,8 +102,13 @@
         var response = JSON.parse(xhr.response);
         console.log("GOOGLE RESPONSE: " + document.getElementById('textbox').innerHTML)
         console.log(response);
-        if (response != null && response.results != undefined) {
-          document.getElementById('textbox').innerHTML = response.results[0].alternatives[0].transcript + " [" + response.results[0].alternatives[0].confidence + "]";
+        if (response != null && response.results != undefined && response.results[0] != undefined) {
+          var str = "";
+          for(var i = 0; i < response.results.length; i++) {
+            str +=  "<p>[" + response.results[i].alternatives[0].confidence + "] ";
+            str += response.results[i].alternatives[0].transcript + "</p>";
+          }
+          document.getElementById('textbox').innerHTML = str;
         }
       }
     }

@@ -40,7 +40,7 @@ function saveAudio() {
 }
 
 function gotBuffers( buffers ) {
-    var canvas = document.getElementById( "wavedisplay" );
+    // var canvas = document.getElementById( "wavedisplay" );
 
     // drawBuffer( canvas.width, canvas.height, canvas.getContext('2d'), buffers[0] );
 
@@ -58,11 +58,13 @@ function doneEncoding( blob ) {
 function toggleRecording( e ) {
     if (e.classList.contains("recording")) {
         // stop recording
+        document.getElementById('textbox').innerHTML = "Uploading!"
         audioRecorder.stop();
         e.classList.remove("recording");
         audioRecorder.getBuffers( gotBuffers );
     } else {
         // start recording
+        document.getElementById('textbox').innerHTML = "Recording!"
         if (!audioRecorder)
             return;
         e.classList.add("recording");
@@ -119,7 +121,7 @@ function updateAnalysers(time) {
             magnitude = magnitude / multiplier;
             var magnitude2 = freqByteData[i * multiplier];
             analyserContext.fillStyle = "hsl( " + Math.round((i*360*5)/numBars) + ", 100%, 50%)";
-            analyserContext.fillRect(i * SPACING, canvasHeight, BAR_WIDTH, -3*magnitude);
+            analyserContext.fillRect(i * SPACING, canvasHeight, BAR_WIDTH, -2*magnitude);
         }
     }
     
@@ -171,9 +173,9 @@ function initAudio() {
             navigator.requestAnimationFrame = navigator.webkitRequestAnimationFrame || navigator.mozRequestAnimationFrame;
 
 
-    var canvas = document.getElementById( "wavedisplay" );
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight - 100;
+    // var canvas = document.getElementById( "wavedisplay" );
+    // canvas.width = window.innerWidth;
+    // canvas.height = window.innerHeight - 100;
     canvas = document.getElementById("analyser");
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight - 100;
