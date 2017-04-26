@@ -1,3 +1,8 @@
+var KDTree;
+
+(function() {
+
+KDTree = KDTreeGenerator;
 
 //_____________________________________________________________________________
 // Bounded priority queue class  --  used in k-NN search
@@ -25,7 +30,6 @@ Object.defineProperty(BPQ.prototype, "values", {
 
 // TODO: make more efficient?
 BPQ.prototype.add = function(value, priority) {
-
   var q = this.elements,
       d = { value: value, priority: priority };
   if (this.isEmpty()) { q.push(d); } 
@@ -46,19 +50,18 @@ BPQ.prototype.add = function(value, priority) {
 //______________________________________________________________________________
 // Node class  --  defines each node in the k-d tree
 
-function Node(location, axis, subnodes, datum, median) {
+function Node(location, axis, subnodes, datum) {
   this.location = location;
   this.axis = axis;
   this.subnodes = subnodes;  // = children nodes = [left child, right child]
   this.datum = datum;
-  this.median = median;
 };
 
 Node.prototype.toArray = function() {
   var array = [
     this.location, 
     this.subnodes[0] ? this.subnodes[0].toArray() : null, 
-    this.subnodes[0] ? this.subnodes[1].toArray() : null
+    this.subnodes[1] ? this.subnodes[1].toArray() : null
   ];
   array.axis = this.axis;
   return array;
@@ -76,26 +79,20 @@ Node.prototype.flatten = function() {
 // k-NN search
 Node.prototype.find = function(target, k) {
   k = k || 1;
+  var queue = new BPQ(k);
   
-  var queue = new BPQ(k),
-      scannedNodes = [];
-  
+  var count = 0;
   search(this);
+  // console.log(count);
   
-  return {
-    nearestNodes: queue.values,
-    scannedNodes: scannedNodes,
-    iterations: scannedNodes.length,
-    maxDistance: queue.maxPriority()
-  };
+  return [queue.values, count];
   
-  // 1-NN algorithm outlined here:
+  // k-NN algorithm outlined here:
   // http://web.stanford.edu/class/cs106l/handouts/assignment-3-kdtree.pdf
+  var count = 0;
   function search(node) {
     if (node === null) return;
-    
-    scannedNodes.push(node);
-    
+    count++;
     // Add current point to BPQ
     queue.add(node, distance(node.location, target));
     
@@ -120,62 +117,92 @@ Node.prototype.find = function(target, k) {
   }
 };
 
+Node.prototype.lines = function(extent) {
+  var x0 = extent[0][0], 
+      y0 = extent[0][1],
+      x1 = extent[1][0], 
+      y1 = extent[1][1],
+      x = this.location[0],
+      y = this.location[1];
+  
+  if (this.location.length > 2) { 
+    console.error("Node.lines() only works with 2D points");
+  }
+      
+  if (this.axis == 0) {
+    var line = [[x, y0], [x, y1]];
+    var left = this.subnodes[0] ?
+      this.subnodes[0].lines([[x0, y0], [x, y1]]) : null;
+    var right = this.subnodes[1] ?
+      this.subnodes[1].lines([[x, y0], [x1, y1]]) : null;
+  } 
+  else if (this.axis == 1) {
+    var line = [[x0, y], [x1, y]];
+    var left = this.subnodes[0] ?
+      this.subnodes[0].lines([[x0, y0], [x1, y]]) : null;
+    var right = this.subnodes[1] ?
+      this.subnodes[1].lines([[x0, y], [x1, y1]]) : null;
+  }
+  
+  return left && right ? [line].concat(left, right) :
+        left ? [line].concat(left) :
+        right ? [line].concat(right) :
+        [line];
+}
+
+
 //______________________________________________________________________________
 // k-d tree generator
 
-function KDTree() {
+function KDTreeGenerator() {
+  var accessor = function(d) { return d; };
   
   function tree(data) {
     var points = data.map(function(d) { 
-      var point = [];
-      for (var i = 0; i < d.length; i++) {
-        point.push(d[i]);
-      }
+      var point = accessor(d);
       point.datum = d;
       return point; 
     });
     
     return treeify(points, 0);
   }
-
+  
+  tree.point = function(_) {
+    if (!arguments.length) return accessor;
+    accessor = _;
+    return tree;
+  };
+  
   return tree;
   
   // Adapted from https://en.wikipedia.org/wiki/K-d_tree
   function treeify(points, depth) {
-    try { var k = points[0].length; }
-    catch (e) { return null; }
-    
-    // Select axis based on depth so that axis cycles through all valid values
-    var axis = depth % k;
-    
-    // TODO: To speed up, consider splitting points based on approximation of
-    //       median; take median of random sample of points (perhaps of 1/10th 
-    //       of the points)
-    
-    // Sort point list and choose median as pivot element
-    points.sort(function(a, b) { return a[axis] - b[axis]; });
-    i_median = Math.floor(points.length / 2);
-    var median = points[i_median];
-    // Create node and construct subtrees
-    var point = points[i_median],
-        left_points = points.slice(0, i_median),
-        right_points = points.slice(i_median + 1);
-        
-    var left = treeify(left_points, depth + 1);
-    var right = treeify(right_points, depth + 1);
-    var node = new Node(
-      point,
-      axis,
-      [left, right],
-      point.datum,
-      median
-    );
-    if (left != null) 
-      left.parent = node;
-    if (right != null) 
-      right.parent = node;
-    return node;
-  }
+      try { var k = points[0].length; }
+      catch (e) { return null; }
+      
+      // Select axis based on depth so that axis cycles through all valid values
+      var axis = depth % k;
+      
+      // TODO: To speed up, consider splitting points based on approximation of
+      //       median; take median of random sample of points (perhaps of 1/10th 
+      //       of the points)
+      
+      // Sort point list and choose median as pivot element
+      points.sort(function(a, b) { return a[axis] - b[axis]; });
+      i_median = Math.floor(points.length / 2);
+      
+      // Create node and construct subtrees
+      var point = points[i_median],
+          left_points = points.slice(0, i_median),
+          right_points = points.slice(i_median + 1);
+          
+      return new Node(
+        point,
+        axis,
+        [treeify(left_points, depth + 1), treeify(right_points, depth + 1)],
+        point.datum
+      );
+    }
 }
 
 
@@ -200,9 +227,11 @@ function get(key) { return function(d) { return d[key]; }; }
 
 // Euclidean distance between two vectors
 function distance(v0, v1) {
-  var sum = 0;
-  for (var i = 0; i < v0.length; i++) {
-      sum += Math.pow(v1[i] - v0[i], 2);
-  }
-  return Math.sqrt(sum);
+  return Math.sqrt(
+    v0.reduce(function(a, b, i) {
+      return a + Math.pow(v0[i] - v1[i], 2);
+    }, 0)
+  );
 }
+
+})();
