@@ -22,6 +22,8 @@
 
                 <!-- <span name="label"></span> -->
                 <!-- <aside name="label"><p>Text.</p></aside> -->
+                </br>
+                <img class="postImage" src="Images/banner.png" alt="Img"></img>
                 
                 <h2>Introduction</h2>
 
@@ -184,6 +186,8 @@ function knn (root, k, query) {
 
                 <h2>Conclusion</h2>
 
+                <p><a href="Images/full.png">To cap it off, here's one of my favorite images from this project, of a fully drawn VP tree on a massive dataset.</a></p>
+                
                 <p>Vantage point trees are an unusual binary space partitioning structure, but they provide some advanages over their counterpart, KD trees. On higher dimensional data, we see improvements in search time for the VP tree. </p>
 
                 <p>Certain areas of machine learning, especially image processing, make heavy use of VP trees. Images can be thought as high dimensional datapoints, where each pixel, or each feature can be a dimension. VP trees can then be used for a reverse image search, finding the closest matches to any given image, and other applications.</p>
@@ -200,12 +204,47 @@ function knn (root, k, query) {
                     <li><a href="http://www1.cs.columbia.edu/CAVE/publications/pdfs/Kumar_ECCV08_2.pdf">Computer vision - Finding similar patches of images</a></li>
                     <li><a href="https://www.scholars.northwestern.edu/en/publications/speeding-melody-search-with-vantage-point-trees">Music - Speeding melody search in musical databases</a></li>
                     <li><a href="https://dspace.library.uu.nl/handle/1874/307362">Algorithms - Optimization of evolutionary algorithms</a></li>
+                    <li><a href="http://pnylab.com/pny/papers/vptree/main.html">Original paper by Peter Yianilos</a></li>
+
+
                 </ul>
 
-                <h2>Demos</h2>
+                <h2>Demo</h2>
 
                 
-                <a href="https://fribbels.github.io/vptree/vptree.html?type=steps&strokeWidth=2&size=600&n=1000&dotSize=1.5">Build</a>
+                <a href="https://fribbels.github.io/vptree/vptree.html?type=steps&strokeWidth=2&size=600&n=1000&dotSize=1.5">VP tree/KD tree construction demo.</a>
+                <p>Each keyboard press builds a new level of the trees. URL query parameters can be modified:</p>
+                <ul>
+                    <li>type - Set to "steps" for iterative build, "all" to build entire tree</li>
+                    <li>size - Width of the dataset in pixels</li>
+                    <li>n - Number of data points (don't go too crazy or risk browser crash)</li>
+                    <li>strokeWidth - Size of radius lines in pixels</li>
+                    <li>dotSize - Size of data points in pixels</li>
+                </ul>
+
+                <h2>Final Notes</h2>
+
+                <p>One important topic in optimizing BSP trees is how to choose the best split, or how to even define best split. How "good" a split is has direct implications on searching behavior, and bad splits can result in brute force behavior. </p>
+
+                <p>In the case of VP trees, this boils down to choosing the best vantage point. In the implementation discussed above, <i>vp</i> is naively chosen at random. While there are some benefits to a randomized approach, namely that probabilistic analysis can be used to maintain logarithmic behavior, and that selecting a random point requires little overhead, there are ways to improve.</p>
+
+                <p>In the original paper on VP trees, Yianilos discusses a few improvements on choosing the vantage point. His argument is that ideally we would want to "with high probability exclude approximately half of the space from consideration." Therefore certain vp choices would be more advantageous. Illustrated in his example are three chosen vantage points and their corresponding <i>mu</i> radii for a uniformly distributed unit square. </p>
+
+                <img class="postImage" src="Images/square.png" alt="Img"></img>
+
+                <p>The three points under consideration are <i>P<sub>m</sub></i> in the middle, <i>P<sub>e</sub></i> in the center of an edge, and <i>P<sub>c</sub></i> in a corner. The radii are chosen such that the split creates two regions of area 0.5. Also calculated are the two values <i>r</i> for radius, and <i>b</i> for boundary length, which is the perimeter within the square area.</p>
+
+                <p>Intuitively, a large boundary length corresponds to a higher probability that no pruning takes place because there is a higher probability for an overlap on a longer edge. For <i>P<sub>m</sub></i>, it has the largest boundary length, and fails to reduce the size of its <i>outside</i> subtree. <i>P<sub>e</sub></i> improves considerably, and <i>P<sub>c</sub></i> is optimal in this example. </p>
+
+                <p>This suggests some immediate improvements for choosing a vantage point. One possible heuristic is to sample a constant number of data points on each split, select the top/bottom-left/right data point as the <i>vp</i>. This does not affect the construction complexity, and maintains a randomized <i>vp</i>, while possibly nudging the <i>vp</i> towards a more optimal corner of the space. </p>
+
+                <p>Another option is to invest more time into construction for improved search time, and select the best possible vantage point by calculating the boundary length to find the minimum. Yianilos also discusses a few augmented VP tree structures to improve performance.</p>
+
+                <img class="postImage" src="Images/augment.png" alt="Img"></img>
+
+                <p>One such augmentation is the <i>VP<sup>s</sup></i> tree. To quickly summarize, the naive tree performs multiple comparisons of a vantage point to its ancestors. It would help searching to record a history of distances to ancestors, and bound the subspace radius with this information. Each nodes is augmented with this new data to prevent repeated calculations.</p> 
+
+                <p>Another augmentation is the <i>VP<sup>sp</sup></i> tree. One issue with the current implementation is that the nodes near the leaves cause multiple "overlaps", and traversing near leaf level takes up a lot search time. This approach adds buckets to the <i>VP<sup>s</sup></i> tree near the leaf level, to take advantage of the saved bounds, and less leaf searching.</p>
                                 <!-- <pre><code class="javascript">
                 
 

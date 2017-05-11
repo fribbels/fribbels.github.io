@@ -12,8 +12,10 @@
     <body>
 
     
-        <a id="record" onclick="toggleRecording(this);"> RECORD </a>
-        <a id="save"> SAVE </a>
+        <input type="submit" id="record" value="Record" onclick="toggleRecording(this);">
+        <input type="submit" id="partial" value="Partial" onclick="partial(this);">
+        <a type="submit" id="save">SAVELINK</a>
+        <a type="submit" id="partialsave">PARTIALLINK</a>
         <p id="textbox">Click record!</p>
         <div id="viz">
             <canvas id="analyser" width="1024" height="500"></canvas>

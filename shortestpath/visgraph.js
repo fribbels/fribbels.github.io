@@ -122,21 +122,7 @@ function validSegment(a, b) {
     return valid;
 }
 
-function drawLine (a, b) {
-    var line = new Path();
-    line.add(a);
-    line.add(b);
 
-
-    line.strokeColor = 'green';
-    line.strokeWidth = 0.2;
-}
-
-function drawDot (point, size, color) {
-    var dot = new Path.Circle(point, size);
-    dot.fillColor = color;
-    return dot;
-}
 
 paper.install(window);
 window.onload = function() {
@@ -190,7 +176,7 @@ window.onload = function() {
 
     drawDot(startPoint, 10, 'red');
 
-    view.on('mousemove', function(event) {
+    view.on('mousedown', function(event) {
         drawPath(event);
     });
 
@@ -220,12 +206,20 @@ function clearEndData() {
         }
     }
 
+    if (endData.tris != undefined) {
+        for (var i = 0; i < endData.tris.length; i++) {
+            endData.tris[i].remove();
+        }
+    }
+
     endData = {};
     endData.lines = [];
     endData.clearEdges = [];
     endData.dots = [];
+    endData.tris = [];
 }
 
+var dots = [];
 function drawPath (event) {
     clearEndData();
     var q = new BinaryHeap(
@@ -241,6 +235,8 @@ function drawPath (event) {
     endPoint.edges = [];
     endPoint.point = endPoint;
 
+    var visPoints = [];
+
     // Draw visibility graph for endpoint
     for (var i = 0; i < vertices.length; i++) {
         var a = vertices[i];
@@ -248,6 +244,7 @@ function drawPath (event) {
             continue;
 
         if (validSegment(a, endPoint)) {
+            visPoints.push(a);
             endPoint.edges.push(a);
             a.edges.push(endPoint);
 
@@ -260,6 +257,65 @@ function drawPath (event) {
             endData.clearEdges.push(a); 
         }
     }
+
+    // Sort by clockwise
+    var atan2 = [];
+
+    if (dots == undefined) {
+        dots = [];
+    } else {
+        for (var i = 0; i < dots.length; i++) {
+            dots[i].remove();
+        }
+        dots = [];
+    }
+
+    for (var i = 0; i < visPoints.length; i++) {
+        var p = visPoints[i];
+        // Extend
+        var vector = new Point(p.x - endPoint.x, p.y - endPoint.y);
+        var norm = Math.sqrt(vector.x * vector.x + vector.y * vector.y);
+        vector.x = vector.x/norm * 1;
+        vector.y = vector.y/norm * 1;
+
+
+        var extend = new Point(p.x + vector.x, p.y + vector.y);
+        var contains = false;
+        // dots.push(drawDot(extend, 4, 'yellow'));
+
+
+        for (var j = 0; j < polygons.length; j++) {
+            if (polygons[j].contains(extend)) {
+                contains = true;
+            } else {
+
+            }
+        }
+
+        if (!contains) {
+            atan2.push([Math.atan2(p.y - endPoint.y, p.x - endPoint.x), p]);
+            dots.push(drawDot(extend, 4, 'green'));
+        } else {
+            dots.push(drawDot(extend, 4, 'red'));
+        }
+    }
+
+
+    atan2.sort(function(a, b) { 
+        return a[0] - b[0];
+    })
+
+    console.log(atan2);
+
+    // Fill tris
+    // for (var i = 0; i < atan2.length; i++) {
+    //     var path = new Path();
+    //     path.add(atan2[i][1]);
+    //     path.add(atan2[i+1 < atan2.length ? i+1 : 0][1]);
+    //     path.add(endPoint);
+    //     path.fillColor = 'grey';
+    //     endData.tris.push(path);
+    // }
 
     // Initialize p-queue
     for (var i = 0; i < vertices.length; i++) {
@@ -314,3 +370,37 @@ function drawPath (event) {
     path.strokeWidth = 7;
     endData.path = path;
 }
+
+/*
+class Node(namedtuple('Node', 'location left_child right_child')):
+    def __repr__(self):
+        return pformat(tuple(self))
+
+def kdtree(point_list, depth=0):
+    try:
+        k = len(point_list[0]) # assumes all points have the same dimension
+    except IndexError as e: # if not point_list:
+        return None
+    # Select axis based on depth so that axis cycles through all valid values
+    axis = depth % k
+ 
+    # Sort point list and choose median as pivot element
+    point_list.sort(key=itemgetter(axis))
+    median = len(point_list) // 2 # choose median
+ 
+    # Create node and construct subtrees
+    return Node(
+        location=point_list[median],
+        left_child=kdtree(point_list[:median], depth + 1),
+        right_child=kdtree(point_list[median + 1:], depth + 1)
+    )
+
+def main():
+    """Example usage"""
+    point_list = [(2,3), (5,4), (9,6), (4,7), (8,1), (7,2)]
+    tree = kdtree(point_list)
+    print(tree)
+
+if __name__ == '__main__':
+    main()
+*/

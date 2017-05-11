@@ -31,13 +31,13 @@ this.onmessage = function(e){
       record(e.data.buffer);
       break;
     case 'exportWAV':
-      exportWAV(e.data.type);
+      exportWAV(e.data.partial, e.data.type);
       break;
     case 'exportMonoWAV':
-      exportMonoWAV(e.data.type);
+      exportMonoWAV(e.data.partial, e.data.type);
       break;
     case 'getBuffers':
-      getBuffers();
+      getBuffers(e.data.partial);
       break;
     case 'clear':
       clear();
@@ -55,19 +55,20 @@ function record(inputBuffer){
   recLength += inputBuffer[0].length;
 }
 
-function exportWAV(type){
-        console.log("exportwav");
+function exportWAV(partial, type){
+  console.log("function recorderWorker.exportwav!!!", partial);
   var bufferL = mergeBuffers(recBuffersL, recLength);
   var bufferR = mergeBuffers(recBuffersR, recLength);
   var interleaved = interleave(bufferL, bufferR);
   var dataview = encodeWAV(interleaved);
   var audioBlob = new Blob([dataview], { type: type });
-
-  this.postMessage(audioBlob);
+  var data = {blob:audioBlob, partial:partial}
+  console.log("function recorderWorker.exportwav?????", data);
+  this.postMessage(data);
 }
 
 function exportMonoWAV(type){
-        console.log("exportmonowav");
+  console.log("function recorderWorker.exportmonowav");
   var bufferL = mergeBuffers(recBuffersL, recLength);
   var dataview = encodeWAV(bufferL, true);
   var audioBlob = new Blob([dataview], { type: type });
@@ -75,12 +76,12 @@ function exportMonoWAV(type){
   this.postMessage(audioBlob);
 }
 
-function getBuffers() {
+function getBuffers(partial) {
+  console.log("function recorderWorker.getBuffers", partial);
   var buffers = [];
   buffers.push( mergeBuffers(recBuffersL, recLength) );
   buffers.push( mergeBuffers(recBuffersR, recLength) );
-        console.log("getbuffers large arrays");
-  this.postMessage(buffers);
+  this.postMessage({buffers: buffers, partial: partial});
 }
 
 function clear(){
@@ -90,7 +91,6 @@ function clear(){
 }
 
 function mergeBuffers(recBuffers, recLength){
-        console.log("mergebuffers");
   var result = new Float32Array(recLength);
   var offset = 0;
   for (var i = 0; i < recBuffers.length; i++){
@@ -129,7 +129,7 @@ function writeString(view, offset, string){
 }
 
 function encodeWAV(samples, mono){
-        console.log("encodewav");
+  console.log("function recorderWorker.encodewav");
   var buffer = new ArrayBuffer(44 + samples.length * 2);
   var view = new DataView(buffer);
 

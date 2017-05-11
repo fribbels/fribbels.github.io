@@ -115,6 +115,20 @@ function pointsToPoly(points) {
     return result;
 }
 
+function drawDot (point, size, color) {
+    var dot = new Path.Circle(point, size);
+    dot.fillColor = color;
+    return dot;
+}
+function drawLine (a, b) {
+    var line = new Path();
+    line.add(a);
+    line.add(b);
+
+
+    line.strokeColor = 'green';
+    line.strokeWidth = 0.2;
+}
     // VALID INTERSECTION
     // if (intersect) {
     //     if (a.path != b.path) {

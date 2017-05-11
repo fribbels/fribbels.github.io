@@ -19,13 +19,14 @@ var audioInput = null,
     realAudioInput = null,
     inputPoint = null,
     audioRecorder = null;
+    partialRecorder = null;
 var rafID = null;
 var analyserContext = null;
 var canvasWidth, canvasHeight;
 var recIndex = 0;
 
-
 window.onload = initAudio;
+var recording = false;
 /* TODO:
 
 - offer mono option
@@ -33,43 +34,79 @@ window.onload = initAudio;
 */
 
 
-function saveAudio() {
-    audioRecorder.exportWAV( doneEncoding );
+function saveAudio(partial) {
+    console.log("function saveAudio");
+    audioRecorder.exportWAV( doneEncoding, partial );
+    partialRecorder.exportWAV( doneEncoding, partial);
     // could get mono instead by saying
     // audioRecorder.exportMonoWAV( doneEncoding );
 }
 
-function gotBuffers( buffers ) {
+function gotBuffers(data) {
+    var buffers = data.buffers;
+    var partial = data.partial;
+    console.log("function gotBuffers", partial);
     // var canvas = document.getElementById( "wavedisplay" );
 
     // drawBuffer( canvas.width, canvas.height, canvas.getContext('2d'), buffers[0] );
 
     // the ONLY time gotBuffers is called is right after a new recording is completed - 
     // so here's where we should set up the download.
-    audioRecorder.exportWAV( doneEncoding );
+    if (partial == "partial")
+        partialRecorder.exportWAV( doneEncoding, partial );
+    if (partial == "full")
+        audioRecorder.exportWAV( doneEncoding, partial );
 }
 
-function doneEncoding( blob ) {
-        console.log("donerecording");
-    Recorder.setupDownload( blob, "myRecording" + ((recIndex<10)?"0":"") + recIndex + ".wav" );
+function doneEncoding( data, type ) {
+    var blob = data.blob;
+    var partial = data.partial;
+    console.log("function doneEncoding", partial, blob, data);
+    Recorder.setupDownload(blob, "myRecording" + ((recIndex<10)?"0":"") + recIndex + ".wav", partial );
+
+    if (partial == "partial") {
+        partialRecorder.clear();
+        partialRecorder.record();
+    }
     recIndex++;
 }
 
-function toggleRecording( e ) {
+function partial() {
+    if (!recording)
+        return;
+    console.log("function partial");
+    partialRecorder.stop();
+    partialRecorder.getBuffers( gotBuffers, "partial" );
+    // partialRecorder.clear();
+    // partialRecorder.record();
+}
+
+function toggleRecording(e) {
+    console.log("function toggleRecording");
     if (e.classList.contains("recording")) {
+        console.log("FIN-----");
+        recording = false;
         // stop recording
-        document.getElementById('textbox').innerHTML = "Uploading!"
+        // document.getElementById('textbox').innerHTML = "Uploading!"
         audioRecorder.stop();
+        partialRecorder.stop();
         e.classList.remove("recording");
-        audioRecorder.getBuffers( gotBuffers );
+        audioRecorder.getBuffers( gotBuffers, "full" );
+        partialRecorder.getBuffers( gotBuffers, "partial" );
     } else {
         // start recording
+        recording = true;
         document.getElementById('textbox').innerHTML = "Recording!"
         if (!audioRecorder)
             return;
         e.classList.add("recording");
         audioRecorder.clear();
         audioRecorder.record();
+
+        partialRecorder.clear();
+        partialRecorder.record();
+
+        setInterval(partial, 5000);
     }
 }
 
@@ -156,6 +193,7 @@ function gotStream(stream) {
     inputPoint.connect( analyserNode );
 
     audioRecorder = new Recorder( inputPoint );
+    partialRecorder = new Recorder( inputPoint );
 
     zeroGain = audioContext.createGain();
     zeroGain.gain.value = 0.0;
