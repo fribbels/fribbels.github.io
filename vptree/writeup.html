@@ -19,7 +19,7 @@
         <div class="page sidebar">
             <div class="content">
                 <h1>VP Tree</h1>
-
+                
                 <!-- <span name="label"></span> -->
                 <!-- <aside name="label"><p>Text.</p></aside> -->
                 </br>
@@ -235,6 +235,8 @@ function knn (root, k, query) {
                 <p>The three points under consideration are <i>P<sub>m</sub></i> in the middle, <i>P<sub>e</sub></i> in the center of an edge, and <i>P<sub>c</sub></i> in a corner. The radii are chosen such that the split creates two regions of area 0.5. Also calculated are the two values <i>r</i> for radius, and <i>b</i> for boundary length, which is the perimeter within the square area.</p>
 
                 <p>Intuitively, a large boundary length corresponds to a higher probability that no pruning takes place because there is a higher probability for an overlap on a longer edge. For <i>P<sub>m</sub></i>, it has the largest boundary length, and fails to reduce the size of its <i>outside</i> subtree. <i>P<sub>e</sub></i> improves considerably, and <i>P<sub>c</sub></i> is optimal in this example. </p>
+
+                <p>The case where one circle <i>A</i> has subtree <i>B</i> of radius bigger than <i>A</i>, arises with splits like <i>P<sub>m</sub></i>. Choosing a better splitting vantage point can solve odd cases like this.</p>
 
                 <p>This suggests some immediate improvements for choosing a vantage point. One possible heuristic is to sample a constant number of data points on each split, select the top/bottom-left/right data point as the <i>vp</i>. This does not affect the construction complexity, and maintains a randomized <i>vp</i>, while possibly nudging the <i>vp</i> towards a more optimal corner of the space. </p>
 
