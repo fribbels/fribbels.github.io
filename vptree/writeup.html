@@ -65,7 +65,7 @@
 
                 <p>At each level of recursion, the tree splits the original problem into two subproblems of half the size. This is because the inside and outside subtrees both contain exacly half the nodes of the parent. At every node, the median of the node's <i>data</i> must be calculated to get a <i>mu</i> value. This is O(n) for the entire level.</p>
 
-                <p>In doing so, the tree has O(logn) depth because it makes binary splits. Therefore, the overall construction complexity of a VP tree is O(nlogn).</p>
+                <p>In doing so, the tree has O(logn) depth because it makes binary splits. Therefore, the overall construction complexity of a VP tree is O(nlogn). Constructing a KD tree is </p>
 
                 <h2>Searching</h2>
 
@@ -215,7 +215,7 @@ function knn (root, k, query) {
                 <a href="https://fribbels.github.io/vptree/vptree.html?type=steps&strokeWidth=2&size=600&n=1000&dotSize=1.5">VP tree/KD tree construction demo.</a>
                 <p>Each keyboard press builds a new level of the trees. URL query parameters can be modified:</p>
                 <ul>
-                    <li>type - Set to "steps" for iterative build, "all" to build entire tree</li>
+                    <li>type - Set to "steps" for iterative build, "all" to build entire tree, "leftright" to step through vp tree with left/right arrows.</li>
                     <li>size - Width of the dataset in pixels</li>
                     <li>n - Number of data points (don't go too crazy or risk browser crash)</li>
                     <li>strokeWidth - Size of radius lines in pixels</li>
