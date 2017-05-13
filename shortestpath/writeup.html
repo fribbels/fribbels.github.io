@@ -40,7 +40,7 @@
 
                 <p>For <i>n</i> obstacle vertices, each vertex can be matched with <i>n-1</i> other vertices in <i>O(n<sup>2</sup>)</i> time. Then each edge between the pairs must be compared to <i>n</i> polygon edges, for <i>O(n<sup>3</sup>)</i> total comparisons.</p>
 
-                <p>This produces the complete visibility graph of the obstacles, and we can use it to calculate the shortest path. We can label each edge with the length of the edge, and run Dijkstra's shortest path algorithm with the endpoints included, in <i>O(E log V)</i> time. </p>
+                <p>This produces the complete visibility graph of the obstacles, and we can use it to calculate the shortest path. We can label each edge with the length of the edge, and run Dijkstra's shortest path algorithm with the endpoints included, in <i>O(E + V log V)</i> time. </p>
 
                 <img class="postImage" src="Images/vis2.png" alt="Img"></img></span>
 
@@ -49,7 +49,7 @@
                 <h2>Visibility graph rotational sweep</br>
                 O(n<sup>2</sup> log n)</h2>
 
-                <p>This approach improves on the construction time of the visibility graph. It takes advantage of the idea that visiting the obstacle vertices in a certain order removes the need to perform a brute force search. If we sweep a line through all the vertices, visiting them in the order encountered, we can search less collisions. </p>
+                <p>This approach improves on the construction time of the visibility graph. It takes advantage of the idea that visiting the obstacle vertices in a certain order removes the need to perform a brute force search. If we sweep a line through all the vertices, visiting them in the order encountered, we can search fewer collisions. </p>
 
                 <span name="sweepsrc">
                 <img class="postImage" src="Images/sweep.png" alt="Img"></img>
@@ -124,7 +124,7 @@
 
                 <p>This algorithm doesn't require calculating the visibility graph at all, which was the focus in the previous approaches. Here, our goal is to simulate the behavior of these waves, and track their path through the obstacle field. </p>
 
-                <p>The space is subdivided into a quadtree structure, where each vertex is in an individual cell and a constant number of cells within distance of every subdivision edge. The subdivision is built in <i>O(n log n)</i> time. The wavefront is then approximated through these discrete subdivision cells instead of through free space.</p>
+                <p>The space is subdivided into a quadtree structure, where only at most one obstacle vertex is in any cell and a constant number of cells are within distance of every subdivision edge. The subdivision is built in <i>O(n log n)</i> time. The wavefront is then approximated through these discrete subdivision cells instead of through free space.</p>
 
                 <span name="subdivsrc">
                 <img class="postImage" src="Images/subdiv.png" alt="Img"></img>

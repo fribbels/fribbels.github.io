@@ -118,9 +118,10 @@ function draw() {
 
     console.log("kdtree: ", kdResults.iterations);
     console.log("vptree: ", vpResults.iterations);
-
+    trash = []
+    layers = [];
     // Draw
-    if (drawType != "steps") {
+    if (drawType == "all") {
         kdpaper.setup('kdcanvas');
         drawAllData(vpData);
         var universe = new kdpaper.Path.Circle(new kData([0, 0]), 10000);
@@ -134,28 +135,94 @@ function draw() {
         stepDraw = true;
         kdsteps = [];
         vpsteps = [];
-
         vppaper.setup('vpcanvas');
-        vpsteps.push([vpTree, new vppaper.Path.Circle(new kData([0, 0]), 10000), new Color('red')]);
+        firstStep = [vpTree, new vppaper.Path.Circle(new kData([0, 0]), 10000), new Color('red')];
+        vpsteps.push(firstStep);
         drawAllData(vpData);
-        vppaper.view.on('keydown', function(event) {
-            var vplen = vpsteps.length;
-            for (var i = 0; i < vplen; i++) {
-                var step = vpsteps.shift();
-                drawVPTree(step[0], step[1], step[2]);
-            }
-        });
+        drawIndex = 0;
+        drawSave = [firstStep];
 
-        kdpaper.setup('kdcanvas');
-        kdsteps.push([kdTree, new kdpaper.Path.Circle(new kData([0, 0]), 10000), new Color('red')]);
-        drawAllData(vpData);
-        kdpaper.view.on('keydown', function(event) {
-            var kdlen = kdsteps.length;
-            for (var i = 0; i < kdlen; i++) {
-                var step = kdsteps.shift();
-                drawKDTree(step[0], step[1], step[2]);
-            }
-        });
+        if (drawType == 'leftright') {
+            vppaper.view.on('keydown', function(event) {
+                project.clear();
+                drawAllData(vpData);
+                firstStep = [vpTree, new vppaper.Path.Circle(new kData([0, 0]), 10000), new Color('red')];
+                vpsteps = [firstStep];
+
+                if (Key.isDown('left')) {
+                    console.log("left");
+                    drawIndex--;
+                    if (drawIndex < 0) {
+                        drawIndex = 0;
+                        return;
+                    }
+
+                    for (var j = 0; j < drawIndex; j++) {
+                        var vplen = vpsteps.length;
+                        for (var i = 0; i < vplen; i++) {
+                            var step = vpsteps.shift();
+                            drawVPTree(step[0], step[1], step[2]);
+                        }
+                    }
+                }
+
+                if (Key.isDown('right')) {
+                    console.log("right", vpsteps.length);
+                    drawIndex++;
+
+                    for (var j = 0; j < drawIndex; j++) {
+                        var vplen = vpsteps.length;
+                        for (var i = 0; i < vplen; i++) {
+                            var step = vpsteps.shift();
+                            drawVPTree(step[0], step[1], step[2]);
+                        }
+                    }
+                }
+            });
+
+            kdpaper.setup('kdcanvas');
+            kdsteps.push([kdTree, new kdpaper.Path.Circle(new kData([0, 0]), 10000), new Color('red')]);
+            drawAllData(vpData);
+            kdpaper.view.on('keydown', function(event) {
+                var kdlen = kdsteps.length;
+                for (var i = 0; i < kdlen; i++) {
+                    var step = kdsteps.shift();
+                    drawKDTree(step[0], step[1], step[2]);
+                }
+            });
+        }
+
+        if (drawType == 'steps') {
+            vppaper.view.on('keydown', function(event) {
+                var vplen = vpsteps.length;
+                for (var i = 0; i < vplen; i++) {
+                    var step = vpsteps.shift();
+                    drawVPTree(step[0], step[1], step[2]);
+                }
+            });
+
+            kdpaper.setup('kdcanvas');
+            kdsteps.push([kdTree, new kdpaper.Path.Circle(new kData([0, 0]), 10000), new Color('red')]);
+            drawAllData(vpData);
+            kdpaper.view.on('keydown', function(event) {
+                var kdlen = kdsteps.length;
+                for (var i = 0; i < kdlen; i++) {
+                    var step = kdsteps.shift();
+                    drawKDTree(step[0], step[1], step[2]);
+                }
+            });
+        }
+
+        // kdpaper.setup('kdcanvas');
+        // kdsteps.push([kdTree, new kdpaper.Path.Circle(new kData([0, 0]), 10000), new Color('red')]);
+        // drawAllData(vpData);
+        // kdpaper.view.on('keydown', function(event) {
+        //     var kdlen = kdsteps.length;
+        //     for (var i = 0; i < kdlen; i++) {
+        //         var step = kdsteps.shift();
+        //         drawKDTree(step[0], step[1], step[2]);
+        //     }
+        // });
 
     }
     // drawVPResults(vpResults.nearestNodes);
@@ -246,6 +313,8 @@ function drawVPTree (node, area, color) {
         circle.strokeColor = color;
         circle.strokeWidth = strokeWidth;
 
+        trash.push(circle);
+
         inside = area.intersect(circle);
         outside = area.subtract(circle);
     } else {
@@ -254,12 +323,15 @@ function drawVPTree (node, area, color) {
         intersect.strokeColor = color;
         intersect.strokeWidth = strokeWidth;
 
+        trash.push(intersect);
+        trash.push(circle);
+
         inside = intersect;
         outside = area.subtract(intersect);
     }
 
     color.hue += 10;
-    if (drawType == "steps") {
+    if (drawType != "all") {
         vpsteps.push([node.left, inside, color]);
         vpsteps.push([node.right, outside, color]);
     } else {
@@ -303,12 +375,11 @@ function drawKDTree (node, area, color) {
 
     color.hue += 10;
 
-    if (drawType == "steps") {
+    if (drawType != "all") {
         kdsteps.push([node.subnodes[0], left, color]);
         kdsteps.push([node.subnodes[1], right, color]);
     } else {
         drawKDTree(node.subnodes[0], left, color);
         drawKDTree(node.subnodes[1], right, color);    
     }
-    
 };
