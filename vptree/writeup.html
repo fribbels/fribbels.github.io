@@ -119,7 +119,7 @@ function knn (root, k, query) {
 
         // Node is within area of interest, add node, decrease tau.
         if (dist < tau) {
-            toSearch.push(currentNode.vp);
+            results.push(currentNode.vp);
             var farthest = results.last();
             tau = query.dist(farthest);
         }
