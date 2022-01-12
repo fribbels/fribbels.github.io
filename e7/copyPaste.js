@@ -150,7 +150,7 @@ function sortByAttribute (arr, attributeStr) {
 function imgHtml(offenseStr) {
     var heroIds = offenseStr.split(",")
     var heroNames = heroIds.map(x => heroesById[x])
-    var heroIcons = heroNames.map(x => heroData[x].assets.icon)
+    var heroIcons = heroNames.map(x => heroData[x] ? heroData[x].assets.icon : "https://raw.githubusercontent.com/fribbels/Fribbels-Epic-7-Optimizer/main/data/cachedimages/question_circle.png")
     var imgHtml = heroIcons.map(x => `<img class="portrait" src=${x}></img>`)
 
     return imgHtml.join(" ")

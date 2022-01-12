@@ -22,8 +22,6 @@ heroesById = {
   "c1022": "Ruele of Light",
   "c1023": "Kayron",
   "c1024": "Iseria",
-  "c1025": "Raqueas",
-  "c1026": "Rande",
   "c1027": "Charles",
   "c1028": "Clarissa",
   "c1029": "Leo",
