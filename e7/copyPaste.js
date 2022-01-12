@@ -69,7 +69,7 @@ jQuery(document).ready(function($){
 
 
         for (var offense of offenses) {
-            html += `${imgHtml(offense.offense)} <div class="resultsText">Wins ${offense.fights.filter(x => x.result == 1).length}, Losses ${offense.fights.filter(x => x.result == 0).length}, Draws ${offense.fights.filter(x => x.result == 2).length}</div><br/><br/>`
+            html += `${imgHtml(offense.offense)} <div class="resultsText">Wins ${offense.fights.filter(x => x.result == 1).length}, Losses ${offense.fights.filter(x => x.result == 0).length}, Draws ${offense.fights.filter(x => x.result == 2).length} --- (${offense.offense.split(",").map(x => (heroesById[x] || "?")).join(", ")})</div><br/><br/>`
         }
 
         $('#resultRows').html(html)
