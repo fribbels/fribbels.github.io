@@ -1,0 +1,12 @@
+.heroSelector {
+    width: 200px;
+}
+
+.defenseHeroesSelection {
+    display: flex;
+    flex-direction: row;
+}
+
+.portrait {
+    width:  60px;
+}

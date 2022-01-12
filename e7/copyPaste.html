@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<head>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
+        <script src=
+"https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js">
+      </script>
+
+
+<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+
+<link rel="stylesheet" href="copyPaste.css"/>
+
+</head>
+
+
+<body>
+
+Defense team:
+<br/>
+
+<div class="defenseHeroesSelection">
+    <select class="heroSelector" name="hero0" id="heroSelector0">
+      <option value=""></option>
+    </select>
+
+    <select class="heroSelector" name="hero1" id="heroSelector1">
+      <option value=""></option>
+    </select>
+
+    <select class="heroSelector" name="hero2" id="heroSelector2">
+      <option value=""></option>
+    </select>
+</div>
+
+
+<div id="defenseIcons"></div>
+
+<input type="button" value="Search" id="searchButton"></input>
+<br/>
+<br/>
+
+<div class="resultsRows" id="resultRows">
+
+</div>
+
+<script src="heroes.js"></script>
+<script src="copyPaste.js"></script>
+
+</body>
