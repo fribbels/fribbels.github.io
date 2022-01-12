@@ -7,7 +7,9 @@ jQuery(document).ready(function($){
     $(document).ready(async () => {
         var options = {
             sortField: 'text',
-            width: 'resolve' // need to override the changed default
+            width: 'resolve', // need to override the changed default
+            placeholder: "Select hero",
+            theme: "classic"
         }
 
         $('#heroSelector0').select2(options);
