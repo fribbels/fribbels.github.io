@@ -1,4 +1,4 @@
-HERO_CACHE = "http://e7-optimizer-game-data.s3-accelerate.amazonaws.com/herodata.json?";
+HERO_CACHE = "https://e7-optimizer-game-data.s3-accelerate.amazonaws.com/herodata.json?";
 heroData = {};
 gwdb = {};
 gwDefenses = {}
