@@ -26,10 +26,10 @@ jQuery(document).ready(function($){
 
         var defenseKey = heroes.map(x => x.id).sort()
         console.log("defkey", defenseKey);
-        console.log(gwDefenses);
+        console.log("gwDefenses", gwDefenses);
 
         var fights = gwDefenses[defenseKey]
-        console.log(fights)
+        console.log("fights", fights)
 
         var defenseHtml = imgHtml(defenseKey.join(","))
         $('#defenseIcons').html("<br/>" + defenseHtml)
@@ -63,13 +63,16 @@ jQuery(document).ready(function($){
 
         $('#resultRows').html("")
 
-        console.log(offenses)
+        console.log("offenses", offenses)
 
         var html = ""
 
 
         for (var offense of offenses) {
-            html += `${imgHtml(offense.offense)} <div class="resultsText">Wins ${offense.fights.filter(x => x.result == 1).length}, Losses ${offense.fights.filter(x => x.result == 0).length}, Draws ${offense.fights.filter(x => x.result == 2).length} --- (${offense.offense.split(",").map(x => (heroesById[x] || "?")).join(", ")})</div><br/><br/>`
+            var inters = offense.fights.filter(x => x.result == 0).map(x => x.offenseName);
+            html += `${imgHtml(offense.offense)} <div class="resultsText">Wins ${offense.fights.filter(x => x.result == 1).length}, Losses ${offense.fights.filter(x => x.result == 0).length}, Draws ${offense.fights.filter(x => x.result == 2).length} --- (${offense.offense.split(",").map(x => (heroesById[x] || "?")).join(", ")})</br>`
+            html += `Inters: ${inters.join(", ")}`
+            html += `</div><br/><br/>`
         }
 
         $('#resultRows').html(html)
