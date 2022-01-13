@@ -3,6 +3,39 @@ heroData = {};
 gwdb = {};
 gwDefenses = {}
 $ = jQuery
+
+var oathFilter = [
+    "Lichty",
+    "candi",
+    "Avenlokh",
+    "TM25MDYT",
+    "iluvdahyun",
+    "Lusira",
+    "42OCatgirl",
+    "Lusankya",
+    "Trizix",
+    "MildTaco",
+    "Vestiges",
+    "DoctorWeeb",
+    "Budandann",
+    "OhGodWhyMe",
+    "Fribbels",
+    "Alexandtheo",
+    "Jeffu",
+    "Strychnine",
+    "Arkyah",
+    "\uac15\ub3d9\ud638",
+    "KimTran",
+    "MasonTho",
+    "Tommy\u30c4",
+    "bumba\u6bc5",
+    "\u4eba\u9593",
+    "JPimport",
+    "YorhaCat",
+    "McWookie",
+    "Karlito"
+];
+
 jQuery(document).ready(function($){
     $(document).ready(async () => {
         var options = {
@@ -67,12 +100,13 @@ jQuery(document).ready(function($){
 
         var html = ""
 
-
         for (var offense of offenses) {
-            var inters = offense.fights.filter(x => x.result == 0).map(x => x.offenseName);
+            var inters = offense.fights.filter(x => x.result == 0).map(x => x.offenseName).filter(x => oathFilter.includes(x));
             html += `${imgHtml(offense.offense)} <div class="resultsText">Wins ${offense.fights.filter(x => x.result == 1).length}, Losses ${offense.fights.filter(x => x.result == 0).length}, Draws ${offense.fights.filter(x => x.result == 2).length} --- (${offense.offense.split(",").map(x => (heroesById[x] || "?")).join(", ")})</br>`
-            html += `Inters: ${inters.join(", ")}`
-            html += `</div><br/><br/>`
+            if (inters.length > 0) {
+                html += `Inters: ${inters.join(", ")}<br/>`
+            }
+            html += `</div><br/>`
         }
 
         $('#resultRows').html(html)
@@ -111,6 +145,7 @@ jQuery(document).ready(function($){
 
             for (var fightId of Object.keys(gwdb)) {
                 var fight = gwdb[fightId]
+                fight.id = fightId
                 if (!gwDefenses[fight.defense]) {
                     gwDefenses[fight.defense] = []
                 }
