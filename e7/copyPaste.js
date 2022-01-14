@@ -36,7 +36,13 @@ var oathFilter = [
     "Karlito"
 ];
 
+selector0 = null
+selector1 = null
+selector2 = null
+
 jQuery(document).ready(function($){
+    $("#homeLink").attr("href", window.location.href.split('?')[0])
+
     $(document).ready(async () => {
         var options = {
             sortField: 'text',
@@ -45,76 +51,34 @@ jQuery(document).ready(function($){
             theme: "classic"
         }
 
-        $('#heroSelector0').select2(options);
-        $('#heroSelector1').select2(options);
-        $('#heroSelector2').select2(options);
+        selector0 = $('#heroSelector0').select2(options);
+        selector1 = $('#heroSelector1').select2(options);
+        selector2 = $('#heroSelector2').select2(options);
     });
 
-    $("#searchButton").click(() => {
-        heroes = [
-            $('#heroSelector0').select2('data')[0],
-            $('#heroSelector1').select2('data')[0],
-            $('#heroSelector2').select2('data')[0]
-        ]
-
-        var defenseKey = heroes.map(x => x.id).sort()
-        console.log("defkey", defenseKey);
-        console.log("gwDefenses", gwDefenses);
-
-        var fights = gwDefenses[defenseKey]
-        console.log("fights", fights)
-
-        var defenseHtml = imgHtml(defenseKey.join(","))
-        $('#defenseIcons').html("<br/>" + defenseHtml)
-
-
-        if (!fights) {
-            $('#resultRows').html("No results")
-            return
-        }
-
-        var offenses = {}
-        for (var fight of fights) {
-            if (!offenses[fight.offense]) {
-                offenses[fight.offense] = []
-            }
-            offenses[fight.offense].push(fight)
-        }
-
-        offenses = Object.keys(offenses).map(x => ({
-            offense: x,
-            fights: offenses[x]
-        }))
-
-        offenses = offenses.sort(function compare(a, b) {
-            if (a.fights.length < b.fights.length)
-                return 1;
-            if (a.fights.length > b.fights.length)
-                return -1;
-            return 0;
-        })
-
-        $('#resultRows').html("")
-
-        console.log("offenses", offenses)
-
-        var html = ""
-
-        for (var offense of offenses) {
-            var inters = offense.fights.filter(x => x.result == 0).map(x => x.offenseName).filter(x => oathFilter.includes(x));
-            html += `${imgHtml(offense.offense)} <div class="resultsText">Wins ${offense.fights.filter(x => x.result == 1).length}, Losses ${offense.fights.filter(x => x.result == 0).length}, Draws ${offense.fights.filter(x => x.result == 2).length} --- (${offense.offense.split(",").map(x => (heroesById[x] || "?")).join(", ")})</br>`
-            if (inters.length > 0) {
-                html += `Inters: ${inters.join(", ")}<br/>`
-            }
-            html += `</div><br/>`
-        }
-
-        $('#resultRows').html(html)
-    })
+    $("#searchButton").click(search)
 
     fetchCache(HERO_CACHE).then(x => {
         console.log(x)
         heroData = x;
+
+        var queryString = window.location.search;
+        var urlParams = new URLSearchParams(queryString).get('def');
+
+        try {
+            if (urlParams) {
+                var names = urlParams.split(",")
+                var ids = names.map(x => Object.entries(heroesById).find(y => y[1] == x)[0])
+
+                selector0.val(ids[0]).trigger("change");
+                selector1.val(ids[1]).trigger("change");
+                selector2.val(ids[2]).trigger("change");
+
+                search();
+            }
+        } catch (e) {
+            console.error("Url parsing failed", e);
+        }
     })
 
     for (var i of Object.keys(heroesById)) {
@@ -155,6 +119,90 @@ jQuery(document).ready(function($){
     });
 });
 
+function search() {
+    heroes = [
+        $('#heroSelector0').select2('data')[0],
+        $('#heroSelector1').select2('data')[0],
+        $('#heroSelector2').select2('data')[0]
+    ]
+
+    var defenseKey = heroes.map(x => x.id).sort()
+    console.log("defkey", defenseKey);
+    console.log("gwDefenses", gwDefenses);
+
+    var names = defenseKey.map(x => heroesById[x]).join(",")
+    window.history.replaceState(null, null, "?def=" + names);
+
+    var fights = gwDefenses[defenseKey]
+    console.log("fights", fights)
+
+    var defenseHtml = imgHtml(defenseKey.join(","))
+    $('#defenseIcons').html("<br/>" + defenseHtml)
+
+
+    if (!fights) {
+        $('#resultRows').html("No results")
+        return
+    }
+
+    var offenses = {}
+    for (var fight of fights) {
+        if (!offenses[fight.offense]) {
+            offenses[fight.offense] = []
+        }
+        offenses[fight.offense].push(fight)
+    }
+
+    offenses = Object.keys(offenses).map(x => ({
+        offense: x,
+        fights: offenses[x]
+    }))
+
+    offenses = offenses.sort(function compare(a, b) {
+        if (a.fights.length < b.fights.length)
+            return 1;
+        if (a.fights.length > b.fights.length)
+            return -1;
+        return 0;
+    })
+
+    $('#resultRows').html("")
+
+    console.log("offenses", offenses)
+
+    var html = ""
+
+    for (var offense of offenses) {
+        var inters = offense.fights.filter(x => x.result == 0).map(x => x.offenseName).filter(x => oathFilter.includes(x));
+
+        html += `
+<div class="resultRow">
+    <div class="imageRow">
+        <div class="fightIcons">
+            ${imgHtml(defenseKey.join(","))}
+            <div class="vSpace"></div>
+            <img class="atkImg" src="atk.png"></img>
+            <div class="vSpace"></div>
+            ${imgHtml(offense.offense)}
+        </div>
+        <div class="resultsContainer">
+            <div class="results W">${offense.fights.filter(x => x.result == 1).length}W</div>
+            <div class="results L">${offense.fights.filter(x => x.result == 0).length}L</div>
+            <div class="results D">${offense.fights.filter(x => x.result == 2).length}D</div>
+        </div>
+        <div class="intersText">
+            ${inters.length > 0 ? `Inters: ${inters.join(", ")}<div class="vSpace"></div><div class="vSpace"></div>` : ""}
+        </div>
+
+        <div class="ctrlFText">${offense.offense.split(",").map(x => (heroesById[x] || "?")).join(", ")}</div>
+    </div>
+</div>
+        `
+    }
+
+    $('#resultRows').html(html)
+}
+
 async function fetchCache(url) {
     console.log("Fetching from url: " + url);
     var myHeaders = new Headers();
@@ -191,5 +239,5 @@ function imgHtml(offenseStr) {
     var heroIcons = heroNames.map(x => heroData[x] ? heroData[x].assets.icon : "https://raw.githubusercontent.com/fribbels/Fribbels-Epic-7-Optimizer/main/data/cachedimages/question_circle.png")
     var imgHtml = heroIcons.map(x => `<img class="portrait" src=${x}></img>`)
 
-    return imgHtml.join(" ")
+    return imgHtml.join(`<div class="vSpace"></div>`)
 }

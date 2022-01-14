@@ -24,3 +24,76 @@
 .vSpace {
     width:  5px;
 }
+
+
+.results {
+    display: flex;
+    justify-content: right; /* align horizontal */
+    align-items: center; /* align vertical */
+    padding-right: 10px;
+    width: 90px;
+    font-size: 30px;
+}
+
+.ctrlFText {
+    display: flex;
+    align-items: center; /* align vertical */
+    color: rgba(0, 0, 0, 0.03);
+}
+
+.intersText {
+    display: flex;
+    align-items: center; /* align vertical */
+    color: darkorange;
+    padding-left: 10px;
+    font-size: 20px;
+}
+
+.W {
+    color: green;
+}
+.L {
+    color: red;
+    width: 60px;
+}
+.D {
+    color: brown;
+    width: 60px;
+}
+
+.resultRow {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 30px;
+}
+
+.imageRow {
+    display: flex;
+    flex-direction: row;
+    white-space: nowrap;
+}
+
+.defenseIcons {
+    display: flex;
+    flex-direction: row;
+}
+
+.atkImg {
+    width: 40px;
+    height: 40px;
+    padding-top: 12px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.fightIcons {
+    display: flex;
+    flex-direction: row;
+    min-width: 440px;
+}
+
+.resultsContainer {
+    display: flex;
+    flex-direction: row;
+    min-width: 250px;
+}
