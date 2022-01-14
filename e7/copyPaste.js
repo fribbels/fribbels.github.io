@@ -81,10 +81,18 @@ jQuery(document).ready(function($){
         }
     })
 
-    for (var i of Object.keys(heroesById)) {
+    var entries = Object.entries(heroesById).sort(function compare(a, b) {
+        if (a[1] < b[1])
+            return -1;
+        if (a[1] > b[1])
+            return 1;
+        return 0;
+    })
+
+    for (var entry of entries) {
         var data = {
-            id: i,
-            text: heroesById[i]
+            id: entry[0],
+            text: entry[1]
         };
 
         var newOption0 = new Option(data.text, data.id, false, false);
