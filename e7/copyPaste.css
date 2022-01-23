@@ -1,5 +1,5 @@
 .heroSelector {
-    width: 200px;
+    width: 220px;
 }
 
 .defenseHeroesSelection {
@@ -10,7 +10,7 @@
 .portrait {
     width:  60px;
 }
-.bodyClass{
+.bodyClass {
   height:500px;
   padding-left: 10px;
 
@@ -36,6 +36,14 @@
     font-size: 30px;
 }
 
+.metaResults {
+    display: flex;
+    justify-content: right; /* align horizontal */
+    align-items: center; /* align vertical */
+    min-width: 90px;
+    font-size: 30px;
+}
+
 .ctrlFText {
     display: flex;
     align-items: center; /* align vertical */
@@ -51,7 +59,7 @@
 }
 
 .W {
-    color: green;
+    color: #1cbf1c;
 }
 .L {
     color: red;
@@ -65,7 +73,7 @@
 .resultRow {
     display: flex;
     flex-direction: column;
-    padding-bottom: 30px;
+    padding-bottom: 25px;
 }
 
 .imageRow {
@@ -75,7 +83,7 @@
 }
 
 .defenseIcons {
-    display: flex;
+    display: flex;sir
     flex-direction: row;
 }
 
@@ -87,18 +95,89 @@
     padding-right: 5px;
 }
 
+.metaAtkImg {
+    width: 40px;
+    height: 40px;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
 .fightIcons {
     display: flex;
     flex-direction: row;
     min-width: 440px;
 }
 
+.metaFightIcons {
+    display: flex;
+    flex-direction: row;
+    min-width: 200px;
+    padding-left: 5px;
+}
+
+.metaFightIcons:hover {
+    border: 0px solid;
+    border-radius: 15px;
+    background-color: #454545;
+}
+
 .resultsContainer {
     display: flex;
     flex-direction: row;
     min-width: 250px;
+    font-size: 30px;
+    align-items: center;
+
 }
 
 .select2-results__option {
     color: black;
+}
+
+.heroSearchIcon {
+    width: 30px;
+    vertical-align: middle;
+    padding-right: 8px;
+}
+
+.select2-results {
+    min-height: 350px;
+}
+
+.select2-container--classic .select2-results > .select2-results__options {
+    min-height: 350px;
+}
+
+.select2-results__option {
+    height: 25px;
+}
+
+.searchRowContainer {
+  text-overflow: ellipsis;
+  height: 32px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.intro {
+    max-width: 800px;
+}
+
+#homeLink {
+    display: inline-block;
+}
+
+.coffeeContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex-direction: row;
+  align-items: center;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+}
+.coffeeContainerImage {
+    height: 32px;
+    cursor: pointer;
 }

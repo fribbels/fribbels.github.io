@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<head>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
+<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+<script src="jquery.min.js"></script>
+
+<link rel="shortcut icon" type="image/ico" href="favicon.ico"/>
+
+<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+
+<link rel="stylesheet" href="copyPaste.css"/>
+
+</head>
+
+
+<body class='bodyClass'>
+
+<a id="homeLink" style="text-decoration: none;color: inherit"><h1>Fribbels E7 Guild War Meta Tracker</h1></a>
+
+<p id="intro" class="intro">
+This app tracks data from attacks in ØATH's top 30 ranked guild war matchups. The dataset consists of the full offense and defense history of our guild and all opponents we faced over the past few weeks.
+</p>
+
+<p>
+  If you're interested in joining a guild wars community, come visit the ØATH discord server! <a href="https://discord.gg/FJnMmZwrg5">https://discord.gg/FJnMmZwrg5</a>
+</p>
+
+<div class="hSpace"></div>
+<h2>Guild war defense lookup</h2>
+
+Search for a defense team to find common offenses used against it
+<div class="hSpace"></div>
+
+<div class="defenseHeroesSelection">
+    <select class="heroSelector" name="hero0" id="heroSelector0">
+      <option value=""></option>
+    </select>
+
+    <div class="vSpace"></div>
+
+    <select class="heroSelector" name="hero1" id="heroSelector1">
+      <option value=""></option>
+    </select>
+
+    <div class="vSpace"></div>
+
+    <select class="heroSelector" name="hero2" id="heroSelector2">
+      <option value=""></option>
+    </select>
+</div>
+
+<div class="hSpace"></div>
+
+<div id="defenseIcons" class="defenseIcons"></div>
+
+<div class="hSpace"></div>
+
+<input type="button" value="Search" id="searchButton"></input>
+<div class="hSpace"></div>
+
+<div class="resultsRows" id="resultRows"></div>
+<div class="resultsRows" id="metaRows"></div>
+
+<div class="hSpace"></div>
+
+
+<a href="https://www.buymeacoffee.com/fribbels">
+<div class="coffeeContainer">
+  <img class="coffeeContainerImage" id="coffeeImage" src="coffee.png">
+</div>
+</a>
+
+<script src="heroes.js"></script>
+<script src="copyPaste.js"></script>
+
+</body>

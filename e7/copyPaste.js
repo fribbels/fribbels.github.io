@@ -1,8 +1,11 @@
 HERO_CACHE = "https://e7-optimizer-game-data.s3-accelerate.amazonaws.com/herodata.json?";
 heroData = {};
-gwdb = {};
-gwDefenses = {}
+oathMode = false;
 $ = jQuery
+
+
+loadedHeroData = false;
+loadedGwdb = false;
 
 var oathFilter = [
     "Lichty",
@@ -41,6 +44,7 @@ selector1 = null
 selector2 = null
 
 jQuery(document).ready(function($){
+    document.title = "Fribbels GW Meta Tracker"
     $("#homeLink").attr("href", window.location.href.split('?')[0])
 
     $(document).ready(async () => {
@@ -48,6 +52,7 @@ jQuery(document).ready(function($){
             sortField: 'text',
             width: 'resolve', // need to override the changed default
             placeholder: "Select hero",
+            templateResult: formatHeroList,
             theme: "classic"
         }
 
@@ -58,12 +63,22 @@ jQuery(document).ready(function($){
 
     $("#searchButton").click(search)
 
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString).get('def');
+
+    if (urlParams) {
+        $('#resultRows').html("Loading..")
+    }
+
     fetchCache(HERO_CACHE).then(x => {
-        console.log(x)
+        console.log("herodata", x)
         heroData = x;
 
-        var queryString = window.location.search;
-        var urlParams = new URLSearchParams(queryString).get('def');
+        var oathUrlParams = new URLSearchParams(queryString).get('oath');
+
+        if (oathUrlParams) {
+            oathMode = true;
+        }
 
         try {
             if (urlParams) {
@@ -79,6 +94,9 @@ jQuery(document).ready(function($){
         } catch (e) {
             console.error("Url parsing failed", e);
         }
+
+        loadedHeroData = true;
+        checkReady();
     })
 
     var entries = Object.entries(heroesById).sort(function compare(a, b) {
@@ -102,30 +120,105 @@ jQuery(document).ready(function($){
         $('#heroSelector1').append(newOption1);
         $('#heroSelector2').append(newOption2);
     }
+});
+
+function checkReady() {
+    if (!loadedHeroData) {
+        return;
+    }
+
+    showMeta()
+}
+
+function showMeta() {
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString).get('def');
+
+    if (urlParams) {
+        return;
+    }
+
+    $('#metaRows').html("Loading...")
 
     $.ajax({
-        url: "./gwdb.json",
+        url: "https://krivpfvxi0.execute-api.us-west-2.amazonaws.com/dev/getMeta",
         //force to handle it as text
         dataType: "text",
+        type: "POST",
+        crossDomain: true,
+        data: "none",
         success: function(data) {
-            //data downloaded so we call parseJSON function
-            //and pass downloaded data
             var json = $.parseJSON(data);
-            //now json variable contains data in json format
-            //let's display a few items
-            gwdb = json;
+            console.log("meta", json)
+            var defenses = json.data
+            var totalSize = json.totalSize
 
-            for (var fightId of Object.keys(gwdb)) {
-                var fight = gwdb[fightId]
-                fight.id = fightId
-                if (!gwDefenses[fight.defense]) {
-                    gwDefenses[fight.defense] = []
-                }
-                gwDefenses[fight.defense].push(fight);
+            $('#intro').html(`This app tracks data from ${totalSize.toLocaleString("en-US")} attacks in ŸØATHŸ's top 30 ranked guild war matchups. The dataset consists of the full offense and defense history of our guild and all opponents we faced over the past few weeks.`)
+
+
+
+            var html = "</br></br></br><h2>Top 20 most common meta defenses in past 14 days</h2>";
+            for (var i = 0; i < 20; i++) {
+                var defense = defenses[i];
+
+                html +=
+`
+<div class="resultRow">
+    <div class="imageRow">
+            <a href="${"gw-meta.html?def=" + defense.defense.split(",").map(x => heroesById[x]).join(",")}">
+            <div class="metaFightIcons">
+                ${imgHtml(defense.defense)}
+                <div class="vSpace"></div>
+                <div class="vSpace"></div>
+            </div>
+            </a>
+        <div class="resultsContainer">
+            <div class="metaResults W">
+                ${defense.w}
+            </div>
+            <img class="metaAtkImg" src="battle_pvp_icon_def.png"></img>
+
+            <div class="metaResults L">
+                ${defense.l}
+            </div>
+            <img class="metaAtkImg" src="battle_pvp_icon_defeat.png"></img>
+
+            <div class="vSpace"></div>
+            <div class="vSpace"></div>
+            <div class="vSpace"></div>
+            <div class="vSpace"></div>
+            <div class="vSpace"></div>
+            <div class="vSpace"></div>
+            <div class="vSpace"></div>
+            <div class="vSpace"></div>
+
+            <div class="metaResults">
+                ${(defense.w/(defense.l + defense.w + defense.d) * 100).toFixed(1)} %
+            </div>
+        </div>
+
+        <div class="vSpace"></div>
+        <div class="vSpace"></div>
+
+        <div class="ctrlFText">${defense.defense.split(",").map(x => (heroesById[x] || "?")).join(", ")}</div>
+    </div>
+</div>
+`
             }
+
+            $('#metaRows').html(html)
         }
-    });
-});
+    })
+}
+
+function formatHeroList(hero) {
+    if (!hero.id) {
+        return hero.text
+    }
+    var output = $(`<div class="searchRowContainer"><img src="${heroData[hero.text].assets.icon}" class="heroSearchIcon" />${hero.text}</div>`);
+
+    return output;
+};
 
 function search() {
     heroes = [
@@ -133,82 +226,103 @@ function search() {
         $('#heroSelector1').select2('data')[0],
         $('#heroSelector2').select2('data')[0]
     ]
-
     var defenseKey = heroes.map(x => x.id).sort()
     console.log("defkey", defenseKey);
-    console.log("gwDefenses", gwDefenses);
 
-    var names = defenseKey.map(x => heroesById[x]).join(",")
-    window.history.replaceState(null, null, "?def=" + names);
-
-    var fights = gwDefenses[defenseKey]
-    console.log("fights", fights)
-
+    $('#resultRows').html("Loading..")
     var defenseHtml = imgHtml(defenseKey.join(","))
     $('#defenseIcons').html("<br/>" + defenseHtml)
 
 
-    if (!fights) {
-        $('#resultRows').html("No results")
-        return
-    }
+    var names = defenseKey.map(x => heroesById[x]).join(",")
+    window.history.replaceState(null, null, "?def=" + names + (oathMode ? "&oath=true" : ""));
 
-    var offenses = {}
-    for (var fight of fights) {
-        if (!offenses[fight.offense]) {
-            offenses[fight.offense] = []
+
+    $.ajax({
+        url: "https://krivpfvxi0.execute-api.us-west-2.amazonaws.com/dev/getDef",
+        //force to handle it as text
+        dataType: "text",
+        type: "POST",
+        crossDomain: true,
+        data: defenseKey.join(","),
+        success: function(data) {
+            //data downloaded so we call parseJSON function
+            //and pass downloaded data
+            var json = $.parseJSON(data);
+            //now json variable contains data in json format
+            //let's display a few items
+            console.log("getDefResponse", json);
+
+            offenseComps = json.data;
+
+            if (!offenseComps) {
+                $('#resultRows').html("No results")
+                return
+            }
+
+            // var offenses = {}
+            // for (var fight of fights) {
+            //     if (!offenses[fight.offense]) {
+            //         offenses[fight.offense] = []
+            //     }
+            //     offenses[fight.offense].push(fight)
+            // }
+
+            // offenses = Object.keys(offenses).map(x => ({
+            //     offense: x,
+            //     fights: offenses[x]
+            // }))
+
+            offenses = Object.entries(offenseComps).sort(function compare(a, b) {
+                if (a[1].w + a[1].l + a[1].d < b[1].w + b[1].l + b[1].d)
+                    return 1;
+                if (a[1].w + a[1].l + a[1].d > b[1].w + b[1].l + b[1].d)
+                    return -1;
+                return 0;
+            })
+
+            $('#resultRows').html("")
+
+            console.log("offenses", offenses)
+
+            var html = ""
+
+            for (var i = 0; i < Math.min(100, offenses.length); i++) {
+            // for (var offense of offenses) {
+                var offense = offenses[i]
+
+                // var inters = offense.fights.filter(x => x.result == 0).map(x => x.offenseName).filter(x => oathFilter.includes(x));
+
+                html += `
+        <div class="resultRow">
+            <div class="imageRow">
+                <div class="fightIcons">
+                    ${imgHtml(defenseKey.join(","))}
+                    <div class="vSpace"></div>
+                    <img class="atkImg" src="battle_pvp_icon_win.png"></img>
+                    <div class="vSpace"></div>
+                    ${imgHtml(offense[0])}
+                </div>
+                <div class="resultsContainer">
+                    <div class="results W">${offense[1].w}W</div>
+                    <div class="results L">${offense[1].l}L</div>
+                    <div class="results D">${offense[1].d}D</div>
+                </div>
+
+                <div class="ctrlFText">${offense[0].split(",").map(x => (heroesById[x] || "?")).join(", ")}</div>
+            </div>
+        </div>
+                `
+            }
+
+                // <div class="intersText">
+                //     ${inters.length && oathMode > 0 ? `Inters: ${inters.join(", ")}<div class="vSpace"></div><div class="vSpace"></div>` : ""}
+                // </div>
+
+            $('#resultRows').html(html)
+            $('#metaRows').html("")
         }
-        offenses[fight.offense].push(fight)
-    }
-
-    offenses = Object.keys(offenses).map(x => ({
-        offense: x,
-        fights: offenses[x]
-    }))
-
-    offenses = offenses.sort(function compare(a, b) {
-        if (a.fights.length < b.fights.length)
-            return 1;
-        if (a.fights.length > b.fights.length)
-            return -1;
-        return 0;
-    })
-
-    $('#resultRows').html("")
-
-    console.log("offenses", offenses)
-
-    var html = ""
-
-    for (var offense of offenses) {
-        var inters = offense.fights.filter(x => x.result == 0).map(x => x.offenseName).filter(x => oathFilter.includes(x));
-
-        html += `
-<div class="resultRow">
-    <div class="imageRow">
-        <div class="fightIcons">
-            ${imgHtml(defenseKey.join(","))}
-            <div class="vSpace"></div>
-            <img class="atkImg" src="atk.png"></img>
-            <div class="vSpace"></div>
-            ${imgHtml(offense.offense)}
-        </div>
-        <div class="resultsContainer">
-            <div class="results W">${offense.fights.filter(x => x.result == 1).length}W</div>
-            <div class="results L">${offense.fights.filter(x => x.result == 0).length}L</div>
-            <div class="results D">${offense.fights.filter(x => x.result == 2).length}D</div>
-        </div>
-        <div class="intersText">
-            ${inters.length > 0 ? `Inters: ${inters.join(", ")}<div class="vSpace"></div><div class="vSpace"></div>` : ""}
-        </div>
-
-        <div class="ctrlFText">${offense.offense.split(",").map(x => (heroesById[x] || "?")).join(", ")}</div>
-    </div>
-</div>
-        `
-    }
-
-    $('#resultRows').html(html)
+    });
 }
 
 async function fetchCache(url) {

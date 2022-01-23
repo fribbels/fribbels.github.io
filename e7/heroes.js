@@ -240,5 +240,7 @@ heroesById = {
     "c6062": "Angel of Light Angelica",
     "c0002": "Mercedes",
     "c2089": "Conqueror Lilias",
-    "c1099": "Command Model Laika"
+    "c1099": "Command Model Laika",
+    "c1125": "Peira",
+    "c2079": "Lionheart Cermia"
 }
