@@ -134,12 +134,6 @@ function showMeta() {
     var queryString = window.location.search;
     var urlParams = new URLSearchParams(queryString).get('def');
 
-    if (urlParams) {
-        return;
-    }
-
-    $('#metaRows').html("Loading...")
-
     $.ajax({
         url: "https://krivpfvxi0.execute-api.us-west-2.amazonaws.com/dev/getMeta",
         //force to handle it as text
@@ -155,6 +149,11 @@ function showMeta() {
 
             $('#intro').html(`This app tracks data from ${totalSize.toLocaleString("en-US")} attacks in ŸØATHŸ's top 30 ranked guild war matchups. The dataset consists of the full offense and defense history of our guild and all opponents we faced over the past few weeks.`)
 
+            if (urlParams) {
+                return;
+            }
+
+            $('#metaRows').html("Loading...")
 
 
             var html = "</br></br></br><h2>Top 20 most common meta defenses in past 14 days</h2>";
