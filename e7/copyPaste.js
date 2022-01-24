@@ -68,6 +68,8 @@ jQuery(document).ready(function($){
 
     if (urlParams) {
         $('#resultRows').html("Loading..")
+    } else {
+        $('#metaRows').html("Loading...")
     }
 
     fetchCache(HERO_CACHE).then(x => {
@@ -78,6 +80,11 @@ jQuery(document).ready(function($){
 
         if (oathUrlParams) {
             oathMode = true;
+        }
+
+        for (var value of Object.values(heroData)) {
+            var img=new Image();
+            img.src=value.assets.icon;
         }
 
         try {
@@ -152,8 +159,6 @@ function showMeta() {
             if (urlParams) {
                 return;
             }
-
-            $('#metaRows').html("Loading...")
 
 
             var html = "</br></br></br><h2>Top 20 most common meta defenses in past 14 days</h2>";
