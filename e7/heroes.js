@@ -242,5 +242,15 @@ heroesById = {
     "c2089": "Conqueror Lilias",
     "c1099": "Command Model Laika",
     "c1125": "Peira",
-    "c2079": "Lionheart Cermia"
+    "c2079": "Lionheart Cermia",
+    "c3131": "Januta",
+    "c3132": "Muwi",
+    "c3133": "Orte",
+    "c3134": "Yoonryoung",
+    "c3135": "Hasol",
+    "c6008": "Bad Cat Armin",
+    "c1128": "Hwayoung",
+    "c4143": "Verdant Adin",
+    "c4103": "Vigilante Leader Glenn",
+    "c2110": "Pirate Captain Flan"
 }
