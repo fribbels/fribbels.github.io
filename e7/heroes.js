@@ -252,5 +252,7 @@ heroesById = {
     "c1128": "Hwayoung",
     "c4143": "Verdant Adin",
     "c4103": "Vigilante Leader Glenn",
-    "c2110": "Pirate Captain Flan"
+    "c2110": "Pirate Captain Flan",
+    "c1130": "Jack-O",
+    "c1129": "Aria"
 }
