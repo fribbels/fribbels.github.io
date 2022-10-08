@@ -42,6 +42,7 @@ var oathFilter = [
 selector0 = null
 selector1 = null
 selector2 = null
+selector3 = null
 
 jQuery(document).ready(function($){
     document.title = "Fribbels GW Meta Tracker"
@@ -59,6 +60,7 @@ jQuery(document).ready(function($){
         selector0 = $('#heroSelector0').select2(options);
         selector1 = $('#heroSelector1').select2(options);
         selector2 = $('#heroSelector2').select2(options);
+        selector3 = $('#heroSelector3').select2(options);
     });
 
     $("#searchButton").click(search)
@@ -123,9 +125,11 @@ jQuery(document).ready(function($){
         var newOption0 = new Option(data.text, data.id, false, false);
         var newOption1 = new Option(data.text, data.id, false, false);
         var newOption2 = new Option(data.text, data.id, false, false);
+        var newOption3 = new Option(data.text, data.id, false, false);
         $('#heroSelector0').append(newOption0);
         $('#heroSelector1').append(newOption1);
         $('#heroSelector2').append(newOption2);
+        $('#heroSelector3').append(newOption3);
     }
 });
 
@@ -164,6 +168,7 @@ function showMeta() {
             var html = "</br></br></br><h2>Top 20 most common meta defenses in past 14 days</h2>";
             for (var i = 0; i < 20; i++) {
                 var defense = defenses[i];
+                var percent = (defense.w/(defense.l + defense.w + defense.d) * 100).toFixed(1);
 
                 html +=
 `
@@ -197,7 +202,7 @@ function showMeta() {
             <div class="vSpace"></div>
 
             <div class="metaResults">
-                ${(defense.w/(defense.l + defense.w + defense.d) * 100).toFixed(1)} %
+                ${isNaN(percent) ? "No results" : percent + " %"}
             </div>
         </div>
 
@@ -264,6 +269,9 @@ function search() {
                 return
             }
 
+
+            filter = $('#heroSelector3').select2('data')[0].id
+            console.log("filter", filter)
             // var offenses = {}
             // for (var fight of fights) {
             //     if (!offenses[fight.offense]) {
@@ -283,6 +291,11 @@ function search() {
                 if (a[1].w + a[1].l + a[1].d > b[1].w + b[1].l + b[1].d)
                     return -1;
                 return 0;
+            }).filter(x => {
+                if (filter.length == 0)
+                    return true
+                else
+                    return x[0].includes(filter);
             })
 
             $('#resultRows').html("")
@@ -310,10 +323,7 @@ function search() {
                 <div class="resultsContainer">
                     <div class="results W">${offense[1].w}W</div>
                     <div class="results L">${offense[1].l}L</div>
-                    <div class="results D">${offense[1].d}D</div>
                 </div>
-
-                <div class="ctrlFText">${offense[0].split(",").map(x => (heroesById[x] || "?")).join(", ")}</div>
             </div>
         </div>
                 `
