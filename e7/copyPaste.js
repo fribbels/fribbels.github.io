@@ -158,7 +158,7 @@ function showMeta() {
             var defenses = json.data
             var totalSize = json.totalSize
 
-            $('#intro').html(`This app tracks data from ${totalSize.toLocaleString("en-US")} attacks in ŸØATHŸ's top 30 ranked guild war matchups. The dataset consists of the full offense and defense history of our guild and all opponents we faced over the past few weeks.`)
+            $('#intro').html(`This app tracks data from ${totalSize.toLocaleString("en-US")} attacks from top 30 ranked guild war matchups.`)
 
             if (urlParams) {
                 return;
