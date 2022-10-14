@@ -44,6 +44,15 @@
     font-size: 30px;
 }
 
+
+.metaResultsPercent {
+    display: flex;
+    justify-content: right; /* align horizontal */
+    align-items: center; /* align vertical */
+    min-width: 130px;
+    font-size: 30px;
+}
+
 .ctrlFText {
     display: flex;
     align-items: center; /* align vertical */
@@ -73,7 +82,8 @@
 .resultRow {
     display: flex;
     flex-direction: column;
-    padding-bottom: 25px;
+    padding-bottom: 22px;
+    white-space: nowrap;
 }
 
 .imageRow {
@@ -115,6 +125,13 @@
     padding-left: 5px;
 }
 
+.metaFightIconsOffense {
+    display: flex;
+    flex-direction: row;
+    min-width: 80px;
+    padding-left: 5px;
+}
+
 .metaFightIcons:hover {
     border: 0px solid;
     border-radius: 15px;
@@ -124,10 +141,10 @@
 .resultsContainer {
     display: flex;
     flex-direction: row;
-    min-width: 250px;
+    /*min-width: 250px;*/
     font-size: 30px;
     align-items: center;
-
+    white-space: nowrap;
 }
 
 .select2-results__option {

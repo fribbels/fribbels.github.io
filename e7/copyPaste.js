@@ -7,38 +7,6 @@ $ = jQuery
 loadedHeroData = false;
 loadedGwdb = false;
 
-var oathFilter = [
-    "Lichty",
-    "candi",
-    "Avenlokh",
-    "TM25MDYT",
-    "iluvdahyun",
-    "Lusira",
-    "42OCatgirl",
-    "Lusankya",
-    "Trizix",
-    "MildTaco",
-    "Vestiges",
-    "DoctorWeeb",
-    "Budandann",
-    "OhGodWhyMe",
-    "Fribbels",
-    "Alexandtheo",
-    "Jeffu",
-    "Strychnine",
-    "Arkyah",
-    "\uac15\ub3d9\ud638",
-    "KimTran",
-    "MasonTho",
-    "Tommy\u30c4",
-    "bumba\u6bc5",
-    "\u4eba\u9593",
-    "JPimport",
-    "YorhaCat",
-    "McWookie",
-    "Karlito"
-];
-
 selector0 = null
 selector1 = null
 selector2 = null
@@ -56,11 +24,19 @@ jQuery(document).ready(function($){
             templateResult: formatHeroList,
             theme: "classic"
         }
+        var optionsWithClear = {
+            sortField: 'text',
+            width: 'resolve', // need to override the changed default
+            placeholder: "Select hero",
+            templateResult: formatHeroList,
+            theme: "classic",
+            allowClear: true
+        }
 
         selector0 = $('#heroSelector0').select2(options);
         selector1 = $('#heroSelector1').select2(options);
         selector2 = $('#heroSelector2').select2(options);
-        selector3 = $('#heroSelector3').select2(options);
+        selector3 = $('#heroSelector3').select2(optionsWithClear);
     });
 
     $("#searchButton").click(search)
@@ -146,7 +122,8 @@ function showMeta() {
     var urlParams = new URLSearchParams(queryString).get('def');
 
     $.ajax({
-        url: "https://krivpfvxi0.execute-api.us-west-2.amazonaws.com/dev/getMeta",
+        // url: "https://krivpfvxi0.execute-api.us-west-2.amazonaws.com/dev/getMeta",
+        url: "http://127.0.0.1:5000/getMeta",
         //force to handle it as text
         dataType: "text",
         type: "POST",
@@ -156,6 +133,7 @@ function showMeta() {
             var json = $.parseJSON(data);
             console.log("meta", json)
             var defenses = json.data
+            var offenses = Object.entries(json.offenseData)
             var totalSize = json.totalSize
 
             $('#intro').html(`This app tracks data from ${totalSize.toLocaleString("en-US")} attacks from top 30 ranked guild war matchups.`)
@@ -164,9 +142,11 @@ function showMeta() {
                 return;
             }
 
+            defenses.sort((a, b) => (b.w+b.l) - (a.w+a.l))
+            offenses.sort((a, b) => (b[1].w+b[1].l) - (a[1].w+a[1].l))
 
-            var html = "</br></br></br><h2>Top 20 most common meta defenses in past 14 days</h2>";
-            for (var i = 0; i < 20; i++) {
+            var html = "</br></br><h2>Top 30 most common meta defenses in past 14 days</h2>";
+            for (var i = 0; i < 30; i++) {
                 var defense = defenses[i];
                 var percent = (defense.w/(defense.l + defense.w + defense.d) * 100).toFixed(1);
 
@@ -177,7 +157,6 @@ function showMeta() {
             <a href="${"gw-meta.html?def=" + defense.defense.split(",").map(x => heroesById[x]).join(",")}">
             <div class="metaFightIcons">
                 ${imgHtml(defense.defense)}
-                <div class="vSpace"></div>
                 <div class="vSpace"></div>
             </div>
             </a>
@@ -192,27 +171,51 @@ function showMeta() {
             </div>
             <img class="metaAtkImg" src="battle_pvp_icon_defeat.png"></img>
 
-            <div class="vSpace"></div>
-            <div class="vSpace"></div>
-            <div class="vSpace"></div>
-            <div class="vSpace"></div>
-            <div class="vSpace"></div>
-            <div class="vSpace"></div>
-            <div class="vSpace"></div>
-            <div class="vSpace"></div>
-
-            <div class="metaResults">
+            <div class="metaResultsPercent">
                 ${isNaN(percent) ? "No results" : percent + " %"}
             </div>
         </div>
-
-        <div class="vSpace"></div>
-        <div class="vSpace"></div>
-
-        <div class="ctrlFText">${defense.defense.split(",").map(x => (heroesById[x] || "?")).join(", ")}</div>
     </div>
 </div>
 `
+            }
+
+            html += "</br></br><h2>Top 30 most common meta offense units in past 14 days</h2>"
+
+            for (var i = 0; i < 30; i++) {
+                var offenseName = offenses[i][0];
+                var offenseWL = offenses[i][1];
+                var percent = (offenseWL.w/(offenseWL.l + offenseWL.w) * 100).toFixed(1);
+                console.log(percent)
+                console.log(offenseWL)
+                html +=
+`
+<div class="resultRow">
+    <div class="imageRow">
+            <div class="metaFightIconsOffense">
+                ${imgHtml(offenseName)}
+                <div class="vSpace"></div>
+            </div>
+            </a>
+        <div class="resultsContainer">
+            <div class="metaResults W">
+                ${offenseWL.w}
+            </div>
+            <img class="metaAtkImg" src="battle_pvp_icon_win.png"></img>
+
+            <div class="metaResults L">
+                ${offenseWL.l}
+            </div>
+            <img class="metaAtkImg" src="battle_pvp_icon_lose.png"></img>
+
+            <div class="metaResultsPercent">
+                ${isNaN(percent) ? "No results" : percent + " %"}
+            </div>
+        </div>
+    </div>
+</div>
+`
+
             }
 
             $('#metaRows').html(html)
@@ -308,7 +311,7 @@ function search() {
             // for (var offense of offenses) {
                 var offense = offenses[i]
 
-                // var inters = offense.fights.filter(x => x.result == 0).map(x => x.offenseName).filter(x => oathFilter.includes(x));
+                var percent = (offense[1].w/(offense[1].l + offense[1].w + offense[1].d) * 100).toFixed(1);
 
                 html += `
         <div class="resultRow">
@@ -323,6 +326,9 @@ function search() {
                 <div class="resultsContainer">
                     <div class="results W">${offense[1].w}W</div>
                     <div class="results L">${offense[1].l}L</div>
+                </div>
+                <div class="metaResultsPercent">
+                    ${isNaN(percent) ? "No results" : percent + " %"}
                 </div>
             </div>
         </div>
