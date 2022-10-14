@@ -122,8 +122,8 @@ function showMeta() {
     var urlParams = new URLSearchParams(queryString).get('def');
 
     $.ajax({
-        // url: "https://krivpfvxi0.execute-api.us-west-2.amazonaws.com/dev/getMeta",
-        url: "http://127.0.0.1:5000/getMeta",
+        url: "https://krivpfvxi0.execute-api.us-west-2.amazonaws.com/dev/getMeta",
+        // url: "http://127.0.0.1:5000/getMeta",
         //force to handle it as text
         dataType: "text",
         type: "POST",
