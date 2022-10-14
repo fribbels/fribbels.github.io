@@ -82,7 +82,7 @@
 .resultRow {
     display: flex;
     flex-direction: column;
-    padding-bottom: 22px;
+    padding-bottom: 25px;
     white-space: nowrap;
 }
 
