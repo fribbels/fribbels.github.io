@@ -11,6 +11,7 @@ selector0 = null
 selector1 = null
 selector2 = null
 selector3 = null
+selector4 = null
 
 jQuery(document).ready(function($){
     document.title = "Fribbels GW Meta Tracker"
@@ -24,10 +25,18 @@ jQuery(document).ready(function($){
             templateResult: formatHeroList,
             theme: "classic"
         }
-        var optionsWithClear = {
+        var includeOptions = {
             sortField: 'text',
             width: 'resolve', // need to override the changed default
-            placeholder: "Select hero",
+            placeholder: "Include hero",
+            templateResult: formatHeroList,
+            theme: "classic",
+            allowClear: true
+        }
+        var excludeOptions = {
+            sortField: 'text',
+            width: 'resolve', // need to override the changed default
+            placeholder: "Exclude hero",
             templateResult: formatHeroList,
             theme: "classic",
             allowClear: true
@@ -36,7 +45,8 @@ jQuery(document).ready(function($){
         selector0 = $('#heroSelector0').select2(options);
         selector1 = $('#heroSelector1').select2(options);
         selector2 = $('#heroSelector2').select2(options);
-        selector3 = $('#heroSelector3').select2(optionsWithClear);
+        selector3 = $('#heroSelector3').select2(includeOptions);
+        selector4 = $('#heroSelector4').select2(excludeOptions);
     });
 
     $("#searchButton").click(search)
@@ -102,10 +112,12 @@ jQuery(document).ready(function($){
         var newOption1 = new Option(data.text, data.id, false, false);
         var newOption2 = new Option(data.text, data.id, false, false);
         var newOption3 = new Option(data.text, data.id, false, false);
+        var newOption4 = new Option(data.text, data.id, false, false);
         $('#heroSelector0').append(newOption0);
         $('#heroSelector1').append(newOption1);
         $('#heroSelector2').append(newOption2);
         $('#heroSelector3').append(newOption3);
+        $('#heroSelector4').append(newOption4);
     }
 });
 
@@ -145,7 +157,7 @@ function showMeta() {
             defenses.sort((a, b) => (b.w+b.l) - (a.w+a.l))
             offenses.sort((a, b) => (b[1].w+b[1].l) - (a[1].w+a[1].l))
 
-            var html = "</br></br><h2>Top 30 most common meta defenses in past 14 days</h2>";
+            var html = "</br></br><h2>Top 30 most common meta defenses in past 3 weeks</h2>";
             for (var i = 0; i < 30; i++) {
                 var defense = defenses[i];
                 var percent = (defense.w/(defense.l + defense.w + defense.d) * 100).toFixed(1);
@@ -180,7 +192,7 @@ function showMeta() {
 `
             }
 
-            html += "</br></br><h2>Top 30 most common meta offense units in past 14 days</h2>"
+            html += "</br></br><h2>Top 30 most common meta offense units in past 3 weeks</h2>"
 
             for (var i = 0; i < 30; i++) {
                 var offenseName = offenses[i][0];
@@ -273,8 +285,10 @@ function search() {
             }
 
 
-            filter = $('#heroSelector3').select2('data')[0].id
-            console.log("filter", filter)
+            include = $('#heroSelector3').select2('data')[0].id
+            exclude = $('#heroSelector4').select2('data')[0].id
+            console.log("filter", include)
+            console.log("exclude", exclude)
             // var offenses = {}
             // for (var fight of fights) {
             //     if (!offenses[fight.offense]) {
@@ -295,10 +309,15 @@ function search() {
                     return -1;
                 return 0;
             }).filter(x => {
-                if (filter.length == 0)
+                if (include.length == 0)
                     return true
                 else
-                    return x[0].includes(filter);
+                    return x[0].includes(include);
+            }).filter(x => {
+                if (exclude.length == 0)
+                    return true
+                else
+                    return !x[0].includes(exclude);
             })
 
             $('#resultRows').html("")
