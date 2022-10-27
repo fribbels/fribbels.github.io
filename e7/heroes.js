@@ -269,5 +269,7 @@ heroesById = {
     "c2080": "Commander Pavel",
     "c1126": "Lua",
     "c2091": "Astromancer Elena",
-    "c4004": "Unbound Knight Arowell"
+    "c4004": "Unbound Knight Arowell",
+    "c4142": "Serene Purity Adin",
+    "c1124": "Arunka"
 }

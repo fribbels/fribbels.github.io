@@ -394,11 +394,15 @@ function sortByAttribute (arr, attributeStr) {
     return arr.sort(compare);
 }
 
+var questionCircle = "https://raw.githubusercontent.com/fribbels/Fribbels-Epic-7-Optimizer/main/data/cachedimages/question_circle.png";
 function imgHtml(offenseStr) {
     var heroIds = offenseStr.split(",")
     var heroNames = heroIds.map(x => heroesById[x])
-    var heroIcons = heroNames.map(x => heroData[x] ? heroData[x].assets.icon : "https://raw.githubusercontent.com/fribbels/Fribbels-Epic-7-Optimizer/main/data/cachedimages/question_circle.png")
-    var imgHtml = heroIcons.map(x => `<img class="portrait" src=${x}></img>`)
+    var imgHtml = heroNames.map(x => {
+        return heroData[x] ?
+        `<img class="portrait" title="${x}" src=${heroData[x].assets.icon}></img>` :
+        `<img class="portrait" src=${questionCircle}></img>`
+    })
 
     return imgHtml.join(`<div class="vSpace"></div>`)
 }
