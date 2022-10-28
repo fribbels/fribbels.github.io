@@ -157,8 +157,8 @@ function showMeta() {
             defenses.sort((a, b) => (b.w+b.l) - (a.w+a.l))
             offenses.sort((a, b) => (b[1].w+b[1].l) - (a[1].w+a[1].l))
 
-            var html = "</br></br><h2>Top 30 most common meta defenses in past 3 weeks</h2>";
-            for (var i = 0; i < 30; i++) {
+            var html = "</br></br><h2>Top 100 most common meta defenses in past 3 weeks</h2>";
+            for (var i = 0; i < 100; i++) {
                 var defense = defenses[i];
                 var percent = (defense.w/(defense.l + defense.w + defense.d) * 100).toFixed(1);
 
