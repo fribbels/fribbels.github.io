@@ -157,10 +157,10 @@ function showMeta() {
             defenses.sort((a, b) => (b.w+b.l) - (a.w+a.l))
             offenses.sort((a, b) => (b[1].w+b[1].l) - (a[1].w+a[1].l))
 
-            var html = "</br></br><h2>Top 100 most common meta defenses in past 3 weeks</h2>";
-            for (var i = 0; i < 100; i++) {
+            var html = "</br></br><h2>Top 50 most common meta defenses in past 3 weeks</h2>";
+            for (var i = 0; i < 50; i++) {
                 var defense = defenses[i];
-                var percent = (defense.w/(defense.l + defense.w + defense.d) * 100).toFixed(1);
+                var percent = (defense.w/(defense.l + defense.w) * 100).toFixed(1);
 
                 html +=
 `
@@ -303,9 +303,9 @@ function search() {
             // }))
 
             offenses = Object.entries(offenseComps).sort(function compare(a, b) {
-                if (a[1].w + a[1].l + a[1].d < b[1].w + b[1].l + b[1].d)
+                if (a[1].w + a[1].l < b[1].w + b[1].l)
                     return 1;
-                if (a[1].w + a[1].l + a[1].d > b[1].w + b[1].l + b[1].d)
+                if (a[1].w + a[1].l > b[1].w + b[1].l)
                     return -1;
                 return 0;
             }).filter(x => {
@@ -330,7 +330,7 @@ function search() {
             // for (var offense of offenses) {
                 var offense = offenses[i]
 
-                var percent = (offense[1].w/(offense[1].l + offense[1].w + offense[1].d) * 100).toFixed(1);
+                var percent = (offense[1].w/(offense[1].l + offense[1].w) * 100).toFixed(1);
 
                 html += `
         <div class="resultRow">
