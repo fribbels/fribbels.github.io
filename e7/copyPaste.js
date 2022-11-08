@@ -17,37 +17,35 @@ jQuery(document).ready(function($){
     document.title = "Fribbels GW Meta Tracker"
     $("#homeLink").attr("href", window.location.href.split('?')[0])
 
-    $(document).ready(async () => {
-        var options = {
-            sortField: 'text',
-            width: 'resolve', // need to override the changed default
-            placeholder: "Select hero",
-            templateResult: formatHeroList,
-            theme: "classic"
-        }
-        var includeOptions = {
-            sortField: 'text',
-            width: 'resolve', // need to override the changed default
-            placeholder: "Include hero",
-            templateResult: formatHeroList,
-            theme: "classic",
-            allowClear: true
-        }
-        var excludeOptions = {
-            sortField: 'text',
-            width: 'resolve', // need to override the changed default
-            placeholder: "Exclude hero",
-            templateResult: formatHeroList,
-            theme: "classic",
-            allowClear: true
-        }
+    var options = {
+        sortField: 'text',
+        width: 'resolve', // need to override the changed default
+        placeholder: "Select hero",
+        templateResult: formatHeroList,
+        theme: "classic"
+    }
+    var includeOptions = {
+        sortField: 'text',
+        width: 'resolve', // need to override the changed default
+        placeholder: "Include hero",
+        templateResult: formatHeroList,
+        theme: "classic",
+        allowClear: true
+    }
+    var excludeOptions = {
+        sortField: 'text',
+        width: 'resolve', // need to override the changed default
+        placeholder: "Exclude hero",
+        templateResult: formatHeroList,
+        theme: "classic",
+        allowClear: true
+    }
 
-        selector0 = $('#heroSelector0').select2(options);
-        selector1 = $('#heroSelector1').select2(options);
-        selector2 = $('#heroSelector2').select2(options);
-        selector3 = $('#heroSelector3').select2(includeOptions);
-        selector4 = $('#heroSelector4').select2(excludeOptions);
-    });
+    selector0 = $('#heroSelector0').select2(options);
+    selector1 = $('#heroSelector1').select2(options);
+    selector2 = $('#heroSelector2').select2(options);
+    selector3 = $('#heroSelector3').select2(includeOptions);
+    selector4 = $('#heroSelector4').select2(excludeOptions);
 
     $("#searchButton").click(search)
 
