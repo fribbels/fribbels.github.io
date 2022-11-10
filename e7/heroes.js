@@ -271,5 +271,7 @@ heroesById = {
     "c2091": "Astromancer Elena",
     "c4004": "Unbound Knight Arowell",
     "c4142": "Serene Purity Adin",
-    "c1124": "Arunka"
+    "c1124": "Arunka",
+    "c4144": "Savior Adin",
+    "c1133": "Zio"
 }
