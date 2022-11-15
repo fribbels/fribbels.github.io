@@ -2,7 +2,7 @@ HERO_CACHE = "https://e7-optimizer-game-data.s3-accelerate.amazonaws.com/herodat
 heroData = {};
 oathMode = false;
 $ = jQuery
-
+dev = false;
 
 loadedHeroData = false;
 loadedGwdb = false;
@@ -132,8 +132,7 @@ function showMeta() {
     var urlParams = new URLSearchParams(queryString).get('def');
 
     $.ajax({
-        url: "https://krivpfvxi0.execute-api.us-west-2.amazonaws.com/dev/getMeta",
-        // url: "http://127.0.0.1:5000/getMeta",
+        url: dev ? "http://127.0.0.1:5000/getMeta" : "https://krivpfvxi0.execute-api.us-west-2.amazonaws.com/dev/getMeta",
         //force to handle it as text
         dataType: "text",
         type: "POST",
@@ -146,7 +145,7 @@ function showMeta() {
             var offenses = Object.entries(json.offenseData)
             var totalSize = json.totalSize
 
-            $('#intro').html(`This app tracks data from ${totalSize.toLocaleString("en-US")} attacks from top 30 ranked guild war matchups.`)
+            $('#intro').html(`This app tracks data from ${totalSize.toLocaleString("en-US")} attacks from top 30 ranked guild wars. Latest update: ${new Date(json.maxTimestamp*1000).toDateString()}.`)
 
             if (urlParams) {
                 return;
@@ -261,7 +260,7 @@ function search() {
 
 
     $.ajax({
-        url: "https://krivpfvxi0.execute-api.us-west-2.amazonaws.com/dev/getDef",
+        url: dev ? "http://127.0.0.1:5000/getDef" : "https://krivpfvxi0.execute-api.us-west-2.amazonaws.com/dev/getDef",
         //force to handle it as text
         dataType: "text",
         type: "POST",
