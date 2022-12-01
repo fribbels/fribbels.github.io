@@ -273,5 +273,7 @@ heroesById = {
     "c4142": "Serene Purity Adin",
     "c1124": "Arunka",
     "c4144": "Savior Adin",
-    "c1133": "Zio"
+    "c1133": "Zio",
+    "c1139": "ae-WINTER",
+    "c1140": "ae-NINGNING",
 }
