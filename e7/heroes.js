@@ -276,4 +276,5 @@ heroesById = {
     "c1133": "Zio",
     "c1139": "ae-WINTER",
     "c1140": "ae-NINGNING",
+    "c1138": "ae-GISELLE",
 }
