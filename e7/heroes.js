@@ -277,4 +277,6 @@ heroesById = {
     "c1139": "ae-WINTER",
     "c1140": "ae-NINGNING",
     "c1138": "ae-GISELLE",
+    "c1137": "ae-KARINA",
+    "c2090": "Death Dealer Ray"
 }

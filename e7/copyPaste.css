@@ -32,7 +32,7 @@
     justify-content: right; /* align horizontal */
     align-items: center; /* align vertical */
     padding-right: 10px;
-    width: 90px;
+    width: 110px;
     font-size: 30px;
 }
 
@@ -69,10 +69,11 @@
 
 .W {
     color: #1cbf1c;
+    width: 80px;
 }
 .L {
     color: red;
-    width: 60px;
+    width: 80px;
 }
 .D {
     color: brown;
@@ -115,10 +116,18 @@
 .fightIcons {
     display: flex;
     flex-direction: row;
-    min-width: 440px;
+    min-width: 200px;
+    padding-right: 20px;
 }
 
 .metaFightIcons {
+    display: flex;
+    flex-direction: row;
+    min-width: 200px;
+    padding-left: 5px;
+}
+
+.metaFightLookup {
     display: flex;
     flex-direction: row;
     min-width: 200px;

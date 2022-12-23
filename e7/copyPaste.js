@@ -329,26 +329,47 @@ function search() {
 
                 var percent = (offense[1].w/(offense[1].l + offense[1].w) * 100).toFixed(1);
 
-                html += `
-        <div class="resultRow">
-            <div class="imageRow">
-                <div class="fightIcons">
-                    ${imgHtml(defenseKey.join(","))}
-                    <div class="vSpace"></div>
-                    <img class="atkImg" src="battle_pvp_icon_win.png"></img>
-                    <div class="vSpace"></div>
-                    ${imgHtml(offense[0])}
-                </div>
-                <div class="resultsContainer">
-                    <div class="results W">${offense[1].w}W</div>
-                    <div class="results L">${offense[1].l}L</div>
-                </div>
-                <div class="metaResultsPercent">
-                    ${isNaN(percent) ? "No results" : percent + " %"}
-                </div>
+                html +=
+// `
+//         <div class="resultRow">
+//             <div class="imageRow">
+//                 <div class="fightIcons">
+//                     ${imgHtml(offense[0])}
+//                 </div>
+//                 <div class="resultsContainer">
+//                     <div class="results W">${offense[1].w}W</div>
+//                     <div class="results L">${offense[1].l}L</div>
+//                 </div>
+//                 <div class="metaResultsPercent">
+//                     ${isNaN(percent) ? "No results" : percent + " %"}
+//                 </div>
+//             </div>
+//         </div>
+// `
+                `
+<div class="resultRow">
+    <div class="imageRow">
+        <div class="metaFightLookup">
+            ${imgHtml(offense[0])}
+        </div>
+        <div class="resultsContainer">
+            <div class="metaResults W">
+                ${offense[1].w}
+            </div>
+            <img class="metaAtkImg" src="battle_pvp_icon_win.png"></img>
+
+            <div class="metaResults L">
+                ${offense[1].l}
+            </div>
+            <img class="metaAtkImg" src="battle_pvp_icon_lose.png"></img>
+
+            <div class="metaResultsPercent">
+                ${isNaN(percent) ? "No results" : percent + " %"}
             </div>
         </div>
-                `
+    </div>
+</div>
+`
             }
 
                 // <div class="intersText">
