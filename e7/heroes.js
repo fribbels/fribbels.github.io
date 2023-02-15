@@ -278,5 +278,16 @@ heroesById = {
     "c1140": "ae-NINGNING",
     "c1138": "ae-GISELLE",
     "c1137": "ae-KARINA",
-    "c2090": "Death Dealer Ray"
+    "c2090": "Death Dealer Ray",
+    "c2071": "Lone Crescent Bellona",
+    "c1141": "Beehoo",
+    "c2087": "Peacemaker Furious",
+    "c4052": "Shepherd Jena",
+    "c3155": "Suthan",
+    "c3154": "Talia",
+    "c3153": "Lilka",
+    "c3152": "Talaz",
+    "c3151": "Juni",
+    "m0063": "Mighty Scout",
+    "m0171": "Wild Angara",
 }
