@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<head>
+<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+<meta content="utf-8" http-equiv="encoding">
+<!-- <script src="//ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->
+<script src="jquery.min.js"></script>
+
+<link rel="shortcut icon" type="image/ico" href="cm_icon_star_j.png"/>
+
+<link href="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/css/select2.min.css" rel="stylesheet" />
+<script src="//cdnjs.cloudflare.com/ajax/libs/select2/4.0.0/js/select2.min.js"></script>
+
+<script src="ag-grid-community.min.noStyle.js"></script>
+
+<link rel="stylesheet" href="ag-grid.css"/>
+<link rel="stylesheet" href="ag-theme-balham.min.css"/>
+<link rel="stylesheet" href="copyPaste.css"/>
+
+</head>
+
+
+<body class='bodyClass'>
+
+<a id="homeLink" style="text-decoration: none;color: inherit"><h1 style="margin-top: 20px; margin-bottom: 10px;">Fribbels E7 Hero Library</h1></a>
+
+<p id="intro" class="intro">
+  This app shows top builds per hero. Values of atk/hp/def are randomly modified by up to 2% for anonymity.
+</p>
+<p>
+  Check out the Fribbels discord server for more info! <a href="https://discord.gg/rDmB4Un7qg">https://discord.gg/rDmB4Un7qg</a>
+</p>
+
+<h2 style="margin-top: 20px; margin-bottom: 10px;">Search for a unit</h2>
+
+
+<select class="heroSelector" name="hero0" id="heroSelector0">
+  <option value=""></option>
+</select>
+
+<input type="button" value="Search" id="buildsSearchButton"></input>
+
+<div class="infoBanner">
+  <div class="selectedBuild" id="selectedBuild">
+    <div class="heroBannerContainer">
+      <img class="heroBanner" id="heroBanner" src=""></img>
+      <!-- <img class="heroBanner" id="heroBanner" src="https://www.e7vau.lt/static/datamine/2022/20220106/face/c1126_su.png"></img> -->
+    </div>
+
+    <div class="setWrapper">
+      <div class="setPreviewBefore" id="setBefore"></div>
+    </div>
+
+    <img class="heroArtifact" id="heroArtifact"></img>
+
+    <div class="statPreviewContainer">
+      <div class="statPreviewRow">
+        <img src="./assets/statatkdark.png" class="statPreviewImg"></img>
+        <div class="statPreviewBefore" id="atkStatBefore"></div>
+      </div>
+
+      <div class="statPreviewRow">
+        <img src="./assets/statdefdark.png" class="statPreviewImg"></img>
+        <div class="statPreviewBefore" id="defStatBefore"></div>
+      </div>
+
+      <div class="statPreviewRow">
+        <img src="./assets/stathpdark.png" class="statPreviewImg"></img>
+        <div class="statPreviewBefore" id="hpStatBefore"></div>
+      </div>
+
+      <div class="statPreviewRow">
+        <img src="./assets/statspddark.png" class="statPreviewImg"></img>
+        <div class="statPreviewBefore" id="spdStatBefore"></div>
+      </div>
+
+      <div class="statPreviewRow">
+        <img src="./assets/statcrdark.png" class="statPreviewImg"></img>
+        <div class="statPreviewBefore" id="crStatBefore"></div>
+      </div>
+
+      <div class="statPreviewRow">
+        <img src="./assets/statcddark.png" class="statPreviewImg"></img>
+        <div class="statPreviewBefore" id="cdStatBefore"></div>
+      </div>
+
+      <div class="statPreviewRow">
+        <img src="./assets/stateffdark.png" class="statPreviewImg"></img>
+        <div class="statPreviewBefore" id="effStatBefore"></div>
+      </div>
+
+      <div class="statPreviewRow">
+        <img src="./assets/statresdark.png" class="statPreviewImg"></img>
+        <div class="statPreviewBefore" id="resStatBefore"></div>
+      </div>
+
+      <div class="statPreviewRow">
+        <img src="./assets/star.png" class="statPreviewImg"></img>
+        <div class="statPreviewBefore" id="gsStatBefore"></div>
+      </div>
+
+      <div class="horizontalSpace"></div>
+      <div class="horizontalSpace"></div>
+
+    </div>
+  </div>
+
+
+  <div class="setCombos" id="setCombos">
+  </div>
+
+  <div class="artifactCombos" id="artifactCombos">
+  </div>
+</div>
+<div id="myGrid" class="ag-theme-balham-dark" style="height: 586px; width: 1180px"></div>
+
+      <div class="horizontalSpace"></div>
+      <div class="horizontalSpace"></div>
+      <div class="horizontalSpace"></div>
+      <div class="horizontalSpace"></div>
+      <div class="horizontalSpace"></div>
+      <div class="horizontalSpace"></div>
+      <div class="horizontalSpace"></div>
+      <div class="horizontalSpace"></div>
+      <div class="horizontalSpace"></div>
+      <div class="horizontalSpace"></div>
+      <div class="horizontalSpace"></div>
+      <div class="horizontalSpace"></div>
+
+<a href="https://www.buymeacoffee.com/fribbels">
+<div class="coffeeContainer">
+  <img class="coffeeContainerImage" id="coffeeImage" src="coffee.png">
+</div>
+</a>
+
+<script src="tinycolor.js"></script>
+<script src="tinygradient.browser.min.js"></script>
+<script src="heroes.js"></script>
+<script src="artis2.js"></script>
+<script src="heroBuilds.js"></script>
+
+</body>

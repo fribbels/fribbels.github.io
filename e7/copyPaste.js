@@ -1,8 +1,7 @@
 HERO_CACHE = "https://e7-optimizer-game-data.s3-accelerate.amazonaws.com/herodata.json?";
 heroData = {};
-oathMode = false;
 $ = jQuery
-dev = false;
+dev = true;
 
 loadedHeroData = false;
 loadedGwdb = false;
@@ -12,6 +11,12 @@ selector1 = null
 selector2 = null
 selector3 = null
 selector4 = null
+
+buildDefSelector0 = null
+buildDefSelector1 = null
+buildDefSelector2 = null
+buildDefSelector3 = null
+buildDefSelector4 = null
 
 jQuery(document).ready(function($){
     document.title = "Fribbels GW Meta Tracker"
@@ -47,7 +52,14 @@ jQuery(document).ready(function($){
     selector3 = $('#heroSelector3').select2(includeOptions);
     selector4 = $('#heroSelector4').select2(excludeOptions);
 
+    buildDefSelector0 = $('#buildDefHeroSelector0').select2(options);
+    buildDefSelector1 = $('#buildDefHeroSelector1').select2(options);
+    buildDefSelector2 = $('#buildDefHeroSelector2').select2(options);
+    buildDefSelector3 = $('#buildDefHeroSelector3').select2(includeOptions);
+    buildDefSelector4 = $('#buildDefHeroSelector4').select2(excludeOptions);
+
     $("#searchButton").click(search)
+    $("#buildDefSearchButton").click(buildDefSearch)
 
     var queryString = window.location.search;
     var urlParams = new URLSearchParams(queryString).get('def');
@@ -61,12 +73,6 @@ jQuery(document).ready(function($){
     fetchCache(HERO_CACHE).then(x => {
         console.log("herodata", x)
         heroData = x;
-
-        var oathUrlParams = new URLSearchParams(queryString).get('oath');
-
-        if (oathUrlParams) {
-            oathMode = true;
-        }
 
         for (var value of Object.values(heroData)) {
             var img=new Image();
@@ -116,6 +122,17 @@ jQuery(document).ready(function($){
         $('#heroSelector2').append(newOption2);
         $('#heroSelector3').append(newOption3);
         $('#heroSelector4').append(newOption4);
+
+        var buildDefNewOption0 = new Option(data.text, data.id, false, false);
+        var buildDefNewOption1 = new Option(data.text, data.id, false, false);
+        var buildDefNewOption2 = new Option(data.text, data.id, false, false);
+        var buildDefNewOption3 = new Option(data.text, data.id, false, false);
+        var buildDefNewOption4 = new Option(data.text, data.id, false, false);
+        $('#buildDefHeroSelector0').append(buildDefNewOption0);
+        $('#buildDefHeroSelector1').append(buildDefNewOption1);
+        $('#buildDefHeroSelector2').append(buildDefNewOption2);
+        $('#buildDefHeroSelector3').append(buildDefNewOption3);
+        $('#buildDefHeroSelector4').append(buildDefNewOption4);
     }
 });
 
@@ -195,8 +212,8 @@ function showMeta() {
                 var offenseName = offenses[i][0];
                 var offenseWL = offenses[i][1];
                 var percent = (offenseWL.w/(offenseWL.l + offenseWL.w) * 100).toFixed(1);
-                console.log(percent)
-                console.log(offenseWL)
+                // console.log(percent)
+                // console.log(offenseWL)
                 html +=
 `
 <div class="resultRow">
@@ -248,7 +265,7 @@ function search() {
         $('#heroSelector2').select2('data')[0]
     ]
     var defenseKey = heroes.map(x => x.id).sort()
-    console.log("defkey", defenseKey);
+    // console.log("defkey", defenseKey);
 
     $('#resultRows').html("Loading..")
     var defenseHtml = imgHtml(defenseKey.join(","))
@@ -256,8 +273,7 @@ function search() {
 
 
     var names = defenseKey.map(x => heroesById[x]).join(",")
-    window.history.replaceState(null, null, "?def=" + names + (oathMode ? "&oath=true" : ""));
-
+    window.history.replaceState(null, null, "?def=" + names);
 
     $.ajax({
         url: dev ? "http://127.0.0.1:5000/getDef" : "https://krivpfvxi0.execute-api.us-west-2.amazonaws.com/dev/getDef",
@@ -284,8 +300,8 @@ function search() {
 
             include = $('#heroSelector3').select2('data')[0].id
             exclude = $('#heroSelector4').select2('data')[0].id
-            console.log("filter", include)
-            console.log("exclude", exclude)
+            // console.log("filter", include)
+            // console.log("exclude", exclude)
             // var offenses = {}
             // for (var fight of fights) {
             //     if (!offenses[fight.offense]) {
@@ -319,7 +335,7 @@ function search() {
 
             $('#resultRows').html("")
 
-            console.log("offenses", offenses)
+            // console.log("offenses", offenses)
 
             var html = ""
 
@@ -372,11 +388,151 @@ function search() {
 `
             }
 
-                // <div class="intersText">
-                //     ${inters.length && oathMode > 0 ? `Inters: ${inters.join(", ")}<div class="vSpace"></div><div class="vSpace"></div>` : ""}
-                // </div>
-
             $('#resultRows').html(html)
+            $('#metaRows').html("")
+        }
+    });
+}
+
+function buildDefSearch() {
+    heroes = [
+        $('#buildDefHeroSelector0').select2('data')[0],
+        $('#buildDefHeroSelector1').select2('data')[0],
+        $('#buildDefHeroSelector2').select2('data')[0]
+    ]
+
+    var defenseKey = heroes.map(x => x.id).sort()
+    // console.log("defkey", defenseKey);
+
+    $('#buildDefResultRows').html("Loading..")
+    var defenseHtml = imgHtml(defenseKey.join(","))
+    $('#buildDefDefenseIcons').html("<br/>" + defenseHtml)
+
+
+    var names = defenseKey.map(x => heroesById[x]).join(",")
+
+
+    $.ajax({
+        url: dev ? "http://127.0.0.1:5000/buildDef" : "https://krivpfvxi0.execute-api.us-west-2.amazonaws.com/dev/buildDef",
+        //force to handle it as text
+        dataType: "text",
+        type: "POST",
+        crossDomain: true,
+        data: defenseKey.join(","),
+        success: function(data) {
+            //data downloaded so we call parseJSON function
+            //and pass downloaded data
+            var json = $.parseJSON(data);
+            //now json variable contains data in json format
+            //let's display a few items
+            console.log("getDefResponse", json);
+
+            offenseComps = json.data;
+
+            if (!offenseComps) {
+                $('#buildDefResultRows').html("No results")
+                return
+            }
+
+
+            include = $('#buildDefHeroSelector3').select2('data')[0].id
+            exclude = $('#buildDefHeroSelector4').select2('data')[0].id
+            // console.log("filter", include)
+            // console.log("exclude", exclude)
+            // var offenses = {}
+            // for (var fight of fights) {
+            //     if (!offenses[fight.offense]) {
+            //         offenses[fight.offense] = []
+            //     }
+            //     offenses[fight.offense].push(fight)
+            // }
+
+            // offenses = Object.keys(offenses).map(x => ({
+            //     offense: x,
+            //     fights: offenses[x]
+            // }))
+
+            offenses = Object.entries(offenseComps).sort(function compare(a, b) {
+                if (a[1].w + a[1].l < b[1].w + b[1].l)
+                    return 1;
+                if (a[1].w + a[1].l > b[1].w + b[1].l)
+                    return -1;
+                return 0;
+            }).filter(x => {
+                if (include.length == 0)
+                    return true
+                else
+                    return x[0].includes(include);
+            }).filter(x => {
+                if (exclude.length == 0)
+                    return true
+                else
+                    return !x[0].includes(exclude);
+            })
+
+            $('#buildDefResultRows').html("")
+
+            // console.log("offenses", offenses)
+
+            var html = ""
+
+            for (var i = 0; i < Math.min(200, offenses.length); i++) {
+            // for (var offense of offenses) {
+                var offense = offenses[i]
+
+                var percent = (offense[1].l/(offense[1].l + offense[1].w) * 100).toFixed(1);
+
+                html +=
+// `
+//         <div class="resultRow">
+//             <div class="imageRow">
+//                 <div class="fightIcons">
+//                     ${imgHtml(offense[0])}
+//                 </div>
+//                 <div class="resultsContainer">
+//                     <div class="results W">${offense[1].w}W</div>
+//                     <div class="results L">${offense[1].l}L</div>
+//                 </div>
+//                 <div class="metaResultsPercent">
+//                     ${isNaN(percent) ? "No results" : percent + " %"}
+//                 </div>
+//             </div>
+//         </div>
+// `
+                `
+<div class="resultRow">
+    <div class="imageRow">
+        <div class="metaFightLookup">
+
+
+            <a href="${"gw-meta.html?def=" + offense[0].split(",").map(x => heroesById[x]).join(",")}">
+            <div class="metaFightIcons">
+                ${imgHtml(offense[0])}
+                <div class="vSpace"></div>
+            </div>
+            </a>
+        </div>
+        <div class="resultsContainer">
+            <div class="metaResults W">
+                ${offense[1].l}
+            </div>
+            <img class="metaAtkImg" src="battle_pvp_icon_def.png"></img>
+
+            <div class="metaResults L">
+                ${offense[1].w}
+            </div>
+            <img class="metaAtkImg" src="battle_pvp_icon_defeat.png"></img>
+
+            <div class="metaResultsPercent">
+                ${isNaN(percent) ? "No results" : percent + " %"}
+            </div>
+        </div>
+    </div>
+</div>
+`
+            }
+
+            $('#buildDefResultRows').html(html)
             $('#metaRows').html("")
         }
     });

@@ -28,7 +28,7 @@ This app tracks attacks from top 30 ranked guild war matchups.
 </p>
 
 <div class="hSpace"></div>
-<h2>Guild war defense lookup</h2>
+<h2>Fighting a defense</h2>
 
 Search for a defense team to find common offenses used against it
 <div class="hSpace"></div>
@@ -68,6 +68,7 @@ Optional: Filter teams including/excluding a unit
     </select>
 </div>
 
+
 <div class="hSpace"></div>
 
 <div id="defenseIcons" class="defenseIcons"></div>
@@ -78,9 +79,70 @@ Optional: Filter teams including/excluding a unit
 <div class="hSpace"></div>
 
 <div class="resultsRows" id="resultRows"></div>
-<div class="resultsRows" id="metaRows"></div>
+
+
 
 <div class="hSpace"></div>
+<div class="hSpace"></div>
+<div class="hSpace"></div>
+<div class="hSpace"></div>
+
+
+<div class="hSpace"></div>
+<h2>Building a defense</h2>
+
+Search for units to find common defenses using those units
+<div class="hSpace"></div>
+
+<div class="defenseHeroesSelection">
+    <select class="heroSelector" name="hero0" id="buildDefHeroSelector0">
+      <option value=""></option>
+    </select>
+
+    <div class="vSpace"></div>
+
+    <select class="heroSelector" name="hero1" id="buildDefHeroSelector1">
+      <option value=""></option>
+    </select>
+
+    <div class="vSpace"></div>
+
+    <select class="heroSelector" name="hero2" id="buildDefHeroSelector2">
+      <option value=""></option>
+    </select>
+</div>
+
+<div class="hSpace"></div>
+
+Optional: Filter teams including/excluding a unit
+<div class="hSpace"></div>
+
+<div class="defenseHeroesSelection">
+    <select class="heroSelector" name="hero3" id="buildDefHeroSelector3">
+      <option value=""></option>
+    </select>
+
+    <div class="vSpace"></div>
+
+    <select class="heroSelector" name="hero4" id="buildDefHeroSelector4">
+      <option value=""></option>
+    </select>
+</div>
+
+<div class="hSpace"></div>
+
+<div id="buildDefDefenseIcons" class="defenseIcons"></div>
+
+<div class="hSpace"></div>
+
+<input type="button" value="Search" id="buildDefSearchButton"></input>
+<div class="hSpace"></div>
+
+<div class="resultsRows" id="buildDefResultRows"></div>
+
+
+
+<div class="resultsRows" id="metaRows"></div>
 
 
 <a href="https://www.buymeacoffee.com/fribbels">
