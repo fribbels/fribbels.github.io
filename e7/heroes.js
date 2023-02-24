@@ -290,4 +290,5 @@ heroesById = {
     "c3151": "Juni",
     "m0063": "Mighty Scout",
     "m0171": "Wild Angara",
+    "c1143": "Amid"
 }
