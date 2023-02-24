@@ -163,7 +163,7 @@ function doesExternalFilterPass(row) {
 var grid = undefined
 
 jQuery(document).ready(function($){
-    document.title = "Fribbels Hero Builds Database"
+    document.title = "Fribbels Hero Library"
     $("#homeLink").attr("href", window.location.href.split('?')[0])
 
 
