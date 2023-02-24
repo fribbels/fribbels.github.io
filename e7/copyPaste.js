@@ -1,7 +1,7 @@
 HERO_CACHE = "https://e7-optimizer-game-data.s3-accelerate.amazonaws.com/herodata.json?";
 heroData = {};
 $ = jQuery
-dev = true;
+dev = false;
 
 loadedHeroData = false;
 loadedGwdb = false;
