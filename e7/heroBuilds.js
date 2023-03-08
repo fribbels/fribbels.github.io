@@ -1,16 +1,20 @@
 HERO_CACHE = "https://e7-optimizer-game-data.s3-accelerate.amazonaws.com/herodata.json?";
+ARTIFACT_CACHE = "https://e7-optimizer-game-data.s3-accelerate.amazonaws.com/artifactdata.json?";
 heroData = {};
+artifactData = {};
+heroesById = {};
 $ = jQuery
 dev = false;
 
 selector0 = null
 loadedHeroData = false;
+loadedArtifactData = false;
 
 buildDefSelector0 = null
 
 var currentAggregate = {};
 
-var artifactsById = artifactsList
+var artifactsById = {}
 // for (var a of artifactsList) {
 //     a.id = a.id.replace("_name", "")
 //     artifactsById[a.id] = a.text
@@ -87,6 +91,7 @@ var gridOptions = {
        { headerName: " #", field: "rank", width: DIGITS_3, sortingOrder: ['asc', 'desc']},
        { headerName: " sets ", field: "sets", width: 85, cellRenderer: (params) => renderSets(params.value)},
        { headerName: " gs ", field: "gs", width: DIGITS_3, cellStyle: columnGradient},
+       { headerName: " bs ", field: "bs", width: DIGITS_3, cellStyle: columnGradient},
        { headerName: " atk", field: "atk", width: DIGITS_4, cellStyle: columnGradient},
        { headerName: " def", field: "def", width: DIGITS_4, cellStyle: columnGradient},
        { headerName: " hp", field: "hp", width: DIGITS_5, cellStyle: columnGradient},
@@ -166,72 +171,29 @@ jQuery(document).ready(function($){
     document.title = "Fribbels Hero Library"
     $("#homeLink").attr("href", window.location.href.split('?')[0])
 
-
-    var options = {
-        sortField: 'text',
-        width: 'resolve', // need to override the changed default
-        placeholder: "Select hero",
-        templateResult: formatHeroList,
-        theme: "classic"
-    }
-
     fetchCache(HERO_CACHE).then(x => {
         console.log("herodata", x)
         heroData = x;
 
+        for (var name of Object.keys(heroData)) {
+            heroesById[heroData[name].code] = name;
+        }
+
+        loadedHeroData = true;
         checkReady();
     })
 
-    idsByHero = {
+    fetchCache(ARTIFACT_CACHE).then(x => {
+        console.log("artifactdata", x)
+        artifactData = x;
 
-    }
+        for (var name of Object.keys(artifactData)) {
+            artifactsById[artifactData[name].code] = name;
+        }
 
-    var entries = Object.entries(heroesById).sort(function compare(a, b) {
-        if (a[1] < b[1])
-            return -1;
-        if (a[1] > b[1])
-            return 1;
-        return 0;
+        loadedArtifactData = true;
+        checkReady();
     })
-
-    for (var entry of entries) {
-        idsByHero[entry[1]] = entry[0];
-
-        var data = {
-            id: entry[0],
-            text: entry[1]
-        };
-
-        var newOption0 = new Option(data.text, data.id, false, false);
-        $('#heroSelector0').append(newOption0);
-
-    }
-
-   // get div to host the grid
-   var gridDiv = document.getElementById("myGrid");
-   // new grid instance, passing in the hosting DIV and Grid Options
-   grid = new agGrid.Grid(gridDiv, gridOptions);
-
-   gridOptions.api.setRowData([]);
-
-    selector0 = $('#heroSelector0').select2(options);
-    $("#buildsSearchButton").click(search)
-
-    var queryString = window.location.search;
-    var urlParams = new URLSearchParams(queryString).get('hero');
-
-    if (urlParams) {
-        console.log("a", urlParams)
-
-        selector0.val(idsByHero[urlParams] || "").trigger("change");
-        search()
-    } else {
-        console.log("b", urlParams)
-        // $('#metaRows').html("Loading...")
-    }
-
-    window.onpopstate = function(e) {selector0.val(idsByHero[e.state.hero] || "").trigger("change"); search(true)}
-
 });
 
 
@@ -346,8 +308,6 @@ function search(pop) {
                 row.mcds = mcdmgps
                 row.dmgh = dmgh
                 row.dmgd = dmgd
-                row.rank = rank;
-                rank++;
 
                 var setsStr = JSON.stringify(convertToFullSets(row.sets))
                 if (!Object.keys(setCombos).includes(setsStr)) {
@@ -363,7 +323,43 @@ function search(pop) {
                 // https://static.smilegatemegaport.com/event/live/epic7/guide/wearingStatus/images/artifact/efw21_ico.png
                 row.artifactName = artifactsById[row.artifactCode] || "?"
 
+                if (!artifactsById[row.artifactCode]) {
+                    row.invalid = true;
+                    continue;
+                }
 
+                var artifact = artifactData[row.artifactName]
+                var artiAtk = artifact.stats.attack * 13;
+                var artiHp = artifact.stats.health * 13;
+                var base = heroData[row.unitName].calculatedStatus.lv60SixStarFullyAwakened
+
+                var fullSets = convertToFullSets(row.sets)
+                var bonusSetAcc = (fullSets.set_acc || 0)/2 * 20
+                var bonusSetAtt = (fullSets.set_att || 0)/4 * 45
+                var bonusSetCri = (fullSets.set_cri || 0)/2 * 12
+                var bonusSetCriDmg = (fullSets.set_cri_dmg || 0)/4 * 60
+                var bonusSetDef = (fullSets.set_def || 0)/2 * 20
+                var bonusSetMaxHp = (fullSets.set_max_hp || 0)/2 * 20
+                var bonusSetRes = (fullSets.set_res || 0)/2 * 20
+                var bonusSetTorrent = (fullSets.set_torrent || 0)/2 * -10
+                var bonusSetRevenge = (fullSets.set_revenge || 0)/4 * Math.floor(0.12 * base.spd)
+                var bonusSetSpeed = (fullSets.set_speed || 0)/4 * Math.floor(0.25 * base.spd)
+
+                // console.log(row)
+
+                var bsStats = {
+                    hp: (row.hp - base.hp - artiHp - bonusSetMaxHp/100*base.hp - bonusSetTorrent/100*base.hp) / base.hp * 100,
+                    atk: (row.atk - base.atk - artiAtk - bonusSetAtt/100*base.atk) / base.atk * 100,
+                    def: (row.def - base.def - bonusSetDef/100*base.def) / base.def * 100,
+                    chc: (Math.min(100, row.chc) - base.chc*100 - bonusSetCri),
+                    chd: (Math.min(350, row.chd) - base.chd*100 - bonusSetCriDmg),
+                    eff: (row.eff - base.eff*100 - bonusSetAcc),
+                    res: (row.efr - base.efr*100 - bonusSetRes),
+                    spd: (row.spd - base.spd - bonusSetSpeed - bonusSetRevenge),
+                }
+                row.gs = Math.ceil(row.gs - Math.max(0, row.chc - 100)*1.6 - Math.max(0, row.chd - 350)*1.14)
+                bs = bsStats.hp + bsStats.atk + bsStats.def + bsStats.eff + bsStats.res + bsStats.chc * 1.6 + bsStats.chd * 1.14 + bsStats.spd * 2
+                row.bs = Math.floor(bs)
 
                 // row.sets = JSON.stringify(Object.keys(row.sets))
 
@@ -380,8 +376,17 @@ function search(pop) {
         // final int dmgd = (int) ((critDamage * def) * rageMultiplier * penMultiplier * torrentMultiplier);
 
             }
+
+            data.data = data.data.filter(x => !x.invalid).sort((x,y) => y.gs-x.gs)
+            for (var rank = 0; rank < data.data.length; rank++) {
+                data.data[rank].rank = rank+1
+            }
+
             aggregateCurrentHeroStats(data.data)
             gridOptions.api.setRowData(data.data);
+
+            window.gridOptions = gridOptions
+            gridOptions.columnApi.resetColumnState()
 
             var sortedSetCombos = Object.entries(setCombos).sort((x, y) => y[1].length - x[1].length)
             sortedSetCombos = sortedSetCombos.splice(0, 9)
@@ -425,9 +430,6 @@ function search(pop) {
                 `;
             }
             $("#artifactCombos").html(artifactComboHtml)
-
-            window.gridOptions = gridOptions
-            gridOptions.columnApi.resetColumnState()
 
             for (let i = 0; i < count; i++) {
                 $(`#setCombos`).on('click', `#setComboRow${i}`, (x) => {
@@ -490,7 +492,69 @@ function checkReady() {
         return;
     }
 
-    // showMeta()
+    if (!loadedArtifactData) {
+        return;
+    }
+
+    var options = {
+        sortField: 'text',
+        width: 'resolve', // need to override the changed default
+        placeholder: "Select hero",
+        templateResult: formatHeroList,
+        theme: "classic"
+    }
+
+    idsByHero = {
+
+    }
+
+    var entries = Object.entries(heroesById).sort(function compare(a, b) {
+        if (a[1] < b[1])
+            return -1;
+        if (a[1] > b[1])
+            return 1;
+        return 0;
+    })
+
+    for (var entry of entries) {
+        idsByHero[entry[1]] = entry[0];
+
+        var data = {
+            id: entry[0],
+            text: entry[1]
+        };
+
+        var newOption0 = new Option(data.text, data.id, false, false);
+        $('#heroSelector0').append(newOption0);
+
+    }
+
+
+    // get div to host the grid
+    var gridDiv = document.getElementById("myGrid");
+    // new grid instance, passing in the hosting DIV and Grid Options
+    grid = new agGrid.Grid(gridDiv, gridOptions);
+
+    gridOptions.api.setRowData([]);
+
+    selector0 = $('#heroSelector0').select2(options);
+    $("#buildsSearchButton").click(search)
+
+    var queryString = window.location.search;
+    var urlParams = new URLSearchParams(queryString).get('hero');
+
+    if (urlParams) {
+        console.log("a", urlParams)
+
+        selector0.val(idsByHero[urlParams] || "").trigger("change");
+        search()
+    } else {
+        console.log("b", urlParams)
+        // $('#metaRows').html("Loading...")
+    }
+
+    window.onpopstate = function(e) {selector0.val(idsByHero[e.state.hero] || "").trigger("change"); search(true)}
+
 }
 
 
@@ -719,6 +783,7 @@ function aggregateCurrentHeroStats(heroStats) {
         "dmgh",
         "dmgd",
         "gs",
+        "bs",
     ]
 
     var count = heroStats.length;

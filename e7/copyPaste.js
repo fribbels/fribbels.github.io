@@ -1,7 +1,8 @@
 HERO_CACHE = "https://e7-optimizer-game-data.s3-accelerate.amazonaws.com/herodata.json?";
 heroData = {};
+heroesById = {};
 $ = jQuery
-dev = false;
+dev = true;
 
 loadedHeroData = false;
 loadedGwdb = false;
@@ -70,13 +71,56 @@ jQuery(document).ready(function($){
         $('#metaRows').html("Loading...")
     }
 
+
     fetchCache(HERO_CACHE).then(x => {
         console.log("herodata", x)
         heroData = x;
 
+        for (var name of Object.keys(heroData)) {
+            heroesById[heroData[name].code] = name;
+        }
+
         for (var value of Object.values(heroData)) {
             var img=new Image();
             img.src=value.assets.icon;
+        }
+
+
+        var entries = Object.entries(heroesById).sort(function compare(a, b) {
+            if (a[1] < b[1])
+                return -1;
+            if (a[1] > b[1])
+                return 1;
+            return 0;
+        })
+
+        for (var entry of entries) {
+            var data = {
+                id: entry[0],
+                text: entry[1]
+            };
+
+            var newOption0 = new Option(data.text, data.id, false, false);
+            var newOption1 = new Option(data.text, data.id, false, false);
+            var newOption2 = new Option(data.text, data.id, false, false);
+            var newOption3 = new Option(data.text, data.id, false, false);
+            var newOption4 = new Option(data.text, data.id, false, false);
+            $('#heroSelector0').append(newOption0);
+            $('#heroSelector1').append(newOption1);
+            $('#heroSelector2').append(newOption2);
+            $('#heroSelector3').append(newOption3);
+            $('#heroSelector4').append(newOption4);
+
+            var buildDefNewOption0 = new Option(data.text, data.id, false, false);
+            var buildDefNewOption1 = new Option(data.text, data.id, false, false);
+            var buildDefNewOption2 = new Option(data.text, data.id, false, false);
+            var buildDefNewOption3 = new Option(data.text, data.id, false, false);
+            var buildDefNewOption4 = new Option(data.text, data.id, false, false);
+            $('#buildDefHeroSelector0').append(buildDefNewOption0);
+            $('#buildDefHeroSelector1').append(buildDefNewOption1);
+            $('#buildDefHeroSelector2').append(buildDefNewOption2);
+            $('#buildDefHeroSelector3').append(buildDefNewOption3);
+            $('#buildDefHeroSelector4').append(buildDefNewOption4);
         }
 
         try {
@@ -94,46 +138,12 @@ jQuery(document).ready(function($){
             console.error("Url parsing failed", e);
         }
 
+
+
         loadedHeroData = true;
         checkReady();
     })
 
-    var entries = Object.entries(heroesById).sort(function compare(a, b) {
-        if (a[1] < b[1])
-            return -1;
-        if (a[1] > b[1])
-            return 1;
-        return 0;
-    })
-
-    for (var entry of entries) {
-        var data = {
-            id: entry[0],
-            text: entry[1]
-        };
-
-        var newOption0 = new Option(data.text, data.id, false, false);
-        var newOption1 = new Option(data.text, data.id, false, false);
-        var newOption2 = new Option(data.text, data.id, false, false);
-        var newOption3 = new Option(data.text, data.id, false, false);
-        var newOption4 = new Option(data.text, data.id, false, false);
-        $('#heroSelector0').append(newOption0);
-        $('#heroSelector1').append(newOption1);
-        $('#heroSelector2').append(newOption2);
-        $('#heroSelector3').append(newOption3);
-        $('#heroSelector4').append(newOption4);
-
-        var buildDefNewOption0 = new Option(data.text, data.id, false, false);
-        var buildDefNewOption1 = new Option(data.text, data.id, false, false);
-        var buildDefNewOption2 = new Option(data.text, data.id, false, false);
-        var buildDefNewOption3 = new Option(data.text, data.id, false, false);
-        var buildDefNewOption4 = new Option(data.text, data.id, false, false);
-        $('#buildDefHeroSelector0').append(buildDefNewOption0);
-        $('#buildDefHeroSelector1').append(buildDefNewOption1);
-        $('#buildDefHeroSelector2').append(buildDefNewOption2);
-        $('#buildDefHeroSelector3').append(buildDefNewOption3);
-        $('#buildDefHeroSelector4').append(buildDefNewOption4);
-    }
 });
 
 function checkReady() {

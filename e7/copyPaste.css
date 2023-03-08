@@ -385,6 +385,7 @@
   font-size: 1em;
   font-weight: 400;
   padding-bottom: 2px;
+  display: inherit;
 }
 #setBefore {
   padding-top: 2px;
