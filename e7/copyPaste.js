@@ -28,7 +28,8 @@ jQuery(document).ready(function($){
         width: 'resolve', // need to override the changed default
         placeholder: "Select hero",
         templateResult: formatHeroList,
-        theme: "classic"
+        theme: "classic",
+        allowClear: true
     }
     var includeOptions = {
         sortField: 'text',
@@ -36,7 +37,7 @@ jQuery(document).ready(function($){
         placeholder: "Include hero",
         templateResult: formatHeroList,
         theme: "classic",
-        allowClear: true
+        allowClear: true,
     }
     var excludeOptions = {
         sortField: 'text',
