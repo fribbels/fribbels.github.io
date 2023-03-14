@@ -206,6 +206,7 @@ function search(pop) {
     $("#heroBanner").attr("src", `https://raw.githubusercontent.com/fribbels/Fribbels-Epic-7-Optimizer/main/data/cachedimages/${id}_su.png`)
     $("#artifactCombos").html("")
     $("#setCombos").html("")
+    $("#gsStats").html("")
 
     $('#atkStatBefore').text("")
     $('#defStatBefore').text("")

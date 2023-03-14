@@ -406,6 +406,8 @@
   vertical-align: middle;
   text-align: left;
   width: 45px;
+  margin: auto;
+  margin-left: 5px;
 
 }
 .setWrapper {
