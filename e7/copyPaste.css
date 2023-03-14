@@ -447,11 +447,15 @@
 }
 .setCombos {
     margin-top: 10px;
-    margin-left: 150px;
+    margin-left: 80px;
 }
 .artifactCombos {
     margin-top: 10px;
-    margin-left: 100px;
+    margin-left: 20px;
+}
+.gsStats {
+    margin-top: 10px;
+    margin-left: 20px;
 }
 .setComboRowImages {
     width: 100px;
@@ -480,7 +484,7 @@
 .setArtifactRowRight {
     margin-top: auto;
     margin-bottom: auto;
-    width: 160px;
+    width: 200px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;

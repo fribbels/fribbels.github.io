@@ -382,6 +382,26 @@ function search(pop) {
                 data.data[rank].rank = rank+1
             }
 
+            var len = data.data.length;
+            var intervals = [1, 3, 5, 10, 20, 30, 40, 50, 75];
+
+            var gsHtml = ""
+            for (var i of intervals) {
+                gsHtml += `
+                <div class="statPreviewRow artifactComboRow">
+                    <div class="setArtifactRowLeft">
+                        ${"" + i + "% "}
+                    </div>
+                    <div class="setArtifactRowRight">
+                        ${data.data[Math.floor(len  * i / 100)].gs + " gs"}
+                    </div>
+                </div>
+                `;
+            }
+            $("#gsStats").html(gsHtml)
+
+            // 9
+
             aggregateCurrentHeroStats(data.data)
             gridOptions.api.setRowData(data.data);
 
