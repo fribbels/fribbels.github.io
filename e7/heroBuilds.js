@@ -250,6 +250,7 @@ function search(pop) {
             gridOptions.api.setDoesExternalFilterPass((row) => {return true})
             gridOptions.api.onFilterChanged()
             data = JSON.parse(data)
+
             var setCombos = {
             }
             var artifactCombos = {
@@ -378,6 +379,8 @@ function search(pop) {
 
             }
 
+            console.log(data)
+
             data.data = data.data.filter(x => !x.invalid).sort((x,y) => y.gs-x.gs)
             for (var rank = 0; rank < data.data.length; rank++) {
                 data.data[rank].rank = rank+1
@@ -385,24 +388,21 @@ function search(pop) {
 
             var len = data.data.length;
 
-            if (len > 100) {
-                var intervals = [1, 3, 5, 10, 20, 30, 40, 50, 75];
-
-                var gsHtml = ""
-                for (var i of intervals) {
-                    gsHtml += `
-                    <div class="statPreviewRow artifactComboRow">
-                        <div class="setArtifactRowLeft">
-                            ${"" + i + "% "}
-                        </div>
-                        <div class="setArtifactRowRight">
-                            ${data.data[Math.floor(len  * i / 100)].gs + " gs"}
-                        </div>
+            var intervals = [1, 3, 5, 10, 20, 30, 40, 50, 75];
+            var gsHtml = ""
+            for (var i of intervals) {
+                gsHtml += `
+                <div class="statPreviewRow artifactComboRow">
+                    <div class="setArtifactRowLeft">
+                        ${"" + i + "% "}
                     </div>
-                    `;
-                }
-                $("#gsStats").html(gsHtml)
+                    <div class="setArtifactRowRight">
+                        ${data.data[Math.floor(len  * i / 100)].gs + " gs"}
+                    </div>
+                </div>
+                `;
             }
+            $("#gsStats").html(gsHtml)
             // 9
 
             aggregateCurrentHeroStats(data.data)
