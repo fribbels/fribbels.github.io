@@ -335,6 +335,11 @@ function search(pop) {
                 var artiHp = artifact.stats.health * 13;
                 var base = heroData[row.unitName].calculatedStatus.lv60SixStarFullyAwakened
 
+                var baseAtk = base.overrideAtk || base.atk;
+                var baseDef = base.overrideDef || base.def;
+                var baseHp = base.overrideHp || base.hp;
+                var baseSpd = base.spd + (base.overrideAdditionalSpd || 0);
+
                 var fullSets = convertToFullSets(row.sets)
                 var bonusSetAcc = (fullSets.set_acc || 0)/2 * 20
                 var bonusSetAtt = (fullSets.set_att || 0)/4 * 45
@@ -344,24 +349,26 @@ function search(pop) {
                 var bonusSetMaxHp = (fullSets.set_max_hp || 0)/2 * 20
                 var bonusSetRes = (fullSets.set_res || 0)/2 * 20
                 var bonusSetTorrent = (fullSets.set_torrent || 0)/2 * -10
-                var bonusSetRevenge = (fullSets.set_revenge || 0)/4 * Math.floor(0.12 * base.spd)
-                var bonusSetSpeed = (fullSets.set_speed || 0)/4 * Math.floor(0.25 * base.spd)
+                var bonusSetRevenge = (fullSets.set_revenge || 0)/4 * Math.floor(0.12 * baseSpd)
+                var bonusSetSpeed = (fullSets.set_speed || 0)/4 * Math.floor(0.25 * baseSpd)
 
                 // console.log(row)
 
                 var bsStats = {
-                    hp: (row.hp - base.hp - artiHp - bonusSetMaxHp/100*base.hp - bonusSetTorrent/100*base.hp) / base.hp * 100,
-                    atk: (row.atk - base.atk - artiAtk - bonusSetAtt/100*base.atk) / base.atk * 100,
-                    def: (row.def - base.def - bonusSetDef/100*base.def) / base.def * 100,
-                    chc: (Math.min(100, row.chc) - base.chc*100 - bonusSetCri),
-                    chd: (Math.min(350, row.chd) - base.chd*100 - bonusSetCriDmg),
-                    eff: (row.eff - base.eff*100 - bonusSetAcc),
-                    res: (row.efr - base.efr*100 - bonusSetRes),
-                    spd: (row.spd - base.spd - bonusSetSpeed - bonusSetRevenge),
+                    hp: (row.hp - baseHp - artiHp - bonusSetMaxHp/100*baseHp - bonusSetTorrent/100*baseHp) / baseHp * 100,
+                    atk: (row.atk - baseAtk - artiAtk - bonusSetAtt/100*baseAtk) / baseAtk * 100,
+                    def: (row.def - baseDef - bonusSetDef/100*baseDef) / baseDef * 100,
+                    chc: (Math.min(100, row.chc) - base.chc*100 - (base.overrideAdditionalCr || 0)*100 - bonusSetCri),
+                    chd: (Math.min(350, row.chd) - base.chd*100 - (base.overrideAdditionalCd || 0)*100 - bonusSetCriDmg),
+                    eff: (row.eff - base.eff*100 - (base.overrideAdditionalEff || 0)*100 - bonusSetAcc),
+                    res: (row.efr - base.efr*100 - (base.overrideAdditionalRes || 0)*100 - bonusSetRes),
+                    spd: (row.spd - baseSpd - bonusSetSpeed - bonusSetRevenge),
                 }
+
                 row.gs = Math.ceil(row.gs - Math.max(0, row.chc - 100)*1.6 - Math.max(0, row.chd - 350)*1.14)
                 bs = bsStats.hp + bsStats.atk + bsStats.def + bsStats.eff + bsStats.res + bsStats.chc * 1.6 + bsStats.chd * 1.14 + bsStats.spd * 2
                 row.bs = Math.floor(bs)
+
 
                 // row.sets = JSON.stringify(Object.keys(row.sets))
 
