@@ -533,7 +533,6 @@ function search(pop) {
                     $(`#artifactComboRow${i}`).toggleClass('active')
 
                     const selectedFilter = sortedArtifactCombos[i][0];
-                    console.log(filters.artifactFilter)
                     if (selectedFilter === filters.artifactFilter) {
                         filters.artifactFilter = null;
                     } else {
@@ -727,7 +726,6 @@ function updateAverages(dataLength) {
 
     if (!!!length) {
         resetStatTotals();
-        console.log('here?')
 
         gridOptions.api.forEachNodeAfterFilter((node, index) => {
             totalAtk += node.data.atk;
