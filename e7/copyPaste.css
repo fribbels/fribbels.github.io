@@ -11,12 +11,14 @@
     width:  60px;
 }
 .bodyClass {
-  height:500px;
-  padding-left: 10px;
-
   font-family: Arial, Helvetica, sans-serif;
   background-color: #212529;
   color: #e2e2e2;
+
+  padding: 0.5rem 1rem;
+  width: calc(100% - 2rem);
+  height: calc(100% - 1rem);
+  margin: 0;
 }
 
 .hSpace {
@@ -300,7 +302,6 @@
 .ag-header-cell-label, .ag-header-group-cell-label {
   justify-content: space-around;
   text-overflow: clip;
-  width: 40px;
 }
 .ag-theme-balham .ag-theme-balham-dark .ag-icon {
   font-size: 14px;
@@ -333,9 +334,6 @@
     outline: none;
 }
 
-.ag-header-cell {
-}
-
 .optimizerSetIcon {
   height: 29px;
   vertical-align: middle;
@@ -347,7 +345,10 @@
 }
 
 #buildsSearchButton {
-    width: 90px;
+    width: 5.625rem;
+    height: 28px; /* Using px here to match the rule in select2.min.css */
+    cursor: pointer;
+    font-weight: bold;
 }
 
 .heroBanner {
@@ -376,7 +377,6 @@
 .statPreviewContainer {
   display:flex;
   flex-direction: column;
-  margin-top: 10px;
   margin-left: 30px;
 }
 .statPreviewRow {
@@ -436,27 +436,34 @@
 .infoBanner {
     display: flex;
     flex-direction: row;
+    width: 77rem;
 }
 .setComboRow {
+    cursor: pointer;
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     padding-left: 10px;
+}
+.setComboRow.active {
+    border: 0px solid;
+    border-radius: 5px;
+    background-color: rgba(30, 144, 255, 0.5);
 }
 .setComboRow:hover {
     border: 0px solid;
     border-radius: 5px;
     background-color: #454545;
 }
+.setCombos, .artifactCombos, .gsStats, .statPreviewContainer {
+  margin-top: 0.625rem;
+}
 .setCombos {
-    margin-top: 10px;
-    margin-left: 80px;
+    padding: 0 2.5rem;
 }
 .artifactCombos {
-    margin-top: 10px;
     margin-left: 20px;
 }
 .gsStats {
-    margin-top: 10px;
     margin-left: 20px;
 }
 .setComboRowImages {
@@ -490,4 +497,12 @@
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+}
+#myGrid {
+  height: 37rem;
+  width: 77rem;
+  margin-bottom: 4.25rem;
+}
+.setCombos, .statPreviewContainer, .artifactCombos {
+  border-right: 1px solid rgba(66, 66, 66, 0.5);
 }

@@ -463,6 +463,8 @@ function search(pop) {
 
             for (let i = 0; i < count; i++) {
                 $(`#setCombos`).on('click', `#setComboRow${i}`, (x) => {
+                    $(`.setComboRow:not(#setComboRow${i})`).removeClass('active')
+                    $(`#setComboRow${i}`).toggleClass('active')
                     gridOptions.api.setIsExternalFilterPresent(() => {
                         return true;
                     })
