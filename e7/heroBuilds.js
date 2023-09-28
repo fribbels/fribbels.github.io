@@ -26,6 +26,16 @@ var filters = {
     setFilter: null,
 }
 
+let totalAtk = 0;
+let totalDef = 0;
+let totalHP = 0;
+let totalCHC = 0;
+let totalCHD = 0;
+let totalEff = 0;
+let totalEfr = 0;
+let totalSpd = 0;
+let totalGS = 0;
+
 const DIGITS_3 = 40;
 const DIGITS_4 = 47;
 const DIGITS_5 = 54;
@@ -259,15 +269,7 @@ function search(pop) {
             gridOptions.api.onFilterChanged()
             data = JSON.parse(data)
 
-            let totalAtk = 0;
-            let totalDef = 0;
-            let totalHP = 0;
-            let totalCHC = 0;
-            let totalCHD = 0;
-            let totalEff = 0;
-            let totalEfr = 0;
-            let totalSpd = 0;
-            let totalGS = 0;
+            resetStatTotals();
 
             var setCombos = {
             }
@@ -414,28 +416,7 @@ function search(pop) {
             }
 
             if (data.data.length) {
-                const avgAtk = totalAtk / data.data.length;
-                const avgDef = totalDef / data.data.length;
-                const avgHP  = totalHP / data.data.length;
-                const avgCHC = totalCHC / data.data.length;
-                const avgCHD = totalCHD / data.data.length;
-                const avgEff = totalEff / data.data.length;
-                const avgEfr = totalEfr / data.data.length;
-                const avgSpd = totalSpd / data.data.length;
-                const avgGS = totalGS / data.data.length;
-
-                $('#atkStatBefore').text(avgAtk.toFixed(0))
-                $('#defStatBefore').text(avgDef.toFixed(0))
-                $('#hpStatBefore').text(avgHP.toFixed(0))
-                $('#spdStatBefore').text(avgSpd.toFixed(0))
-                $('#crStatBefore').text(avgCHC.toFixed(0))
-                $('#cdStatBefore').text(avgCHD.toFixed(0))
-                $('#effStatBefore').text(avgEff.toFixed(0))
-                $('#resStatBefore').text(avgEfr.toFixed(0))
-                $('#gsStatBefore').text(avgGS.toFixed(0))
-
-                $('.statPreviewContainer').removeClass('gutterTop')
-                $('#avgText').show()
+                updateAverages(data.data.length);
             }
             
 
@@ -518,6 +499,7 @@ function search(pop) {
                 $(`#setCombos`).on('click', `#setComboRow${i}`, (x) => {
                     $(`.setComboRow:not(#setComboRow${i})`).removeClass('active')
                     $(`#setComboRow${i}`).toggleClass('active')
+
                     gridOptions.api.setIsExternalFilterPresent(() => {
                         return true;
                     })
@@ -544,6 +526,7 @@ function search(pop) {
                     }
 
                     gridOptions.api.onFilterChanged()
+                    updateAverages(0, true)
                 })
             }
             $('.setCombos, .artifactCombos, .gsStats').show();
@@ -642,6 +625,64 @@ function checkReady() {
 
 }
 
+function resetStatTotals() {
+    totalAtk = 0;
+    totalDef = 0;
+    totalHP = 0;
+    totalCHC = 0;
+    totalCHD = 0;
+    totalEff = 0;
+    totalEfr = 0;
+    totalSpd = 0;
+    totalGS = 0;
+}
+
+function updateAverages(dataLength, recalculate=false) {
+    let length = dataLength;
+
+    if (recalculate) {
+        resetStatTotals();
+
+        gridOptions.api.forEachNodeAfterFilter((node, index) => {
+            totalAtk += node.data.atk;
+            totalDef += node.data.def;
+            totalHP += node.data.hp;
+            totalCHC += node.data.chc;
+            totalCHD += node.data.chd;
+            totalEff += node.data.eff;
+            totalEfr += node.data.efr;
+            totalSpd += node.data.spd;
+        })
+
+        length = gridOptions.api.getDisplayedRowCount();
+        console.log(length)
+    }
+
+    if (!!length) {
+        const avgAtk = totalAtk / length;
+        const avgDef = totalDef / length;
+        const avgHP  = totalHP / length;
+        const avgCHC = totalCHC / length;
+        const avgCHD = totalCHD / length;
+        const avgEff = totalEff / length;
+        const avgEfr = totalEfr / length;
+        const avgSpd = totalSpd / length;
+        const avgGS = totalGS / length;
+
+        $('#atkStatBefore').text(avgAtk.toFixed(0))
+        $('#defStatBefore').text(avgDef.toFixed(0))
+        $('#hpStatBefore').text(avgHP.toFixed(0))
+        $('#spdStatBefore').text(avgSpd.toFixed(0))
+        $('#crStatBefore').text(avgCHC.toFixed(0))
+        $('#cdStatBefore').text(avgCHD.toFixed(0))
+        $('#effStatBefore').text(avgEff.toFixed(0))
+        $('#resStatBefore').text(avgEfr.toFixed(0))
+        $('#gsStatBefore').text(avgGS.toFixed(0))
+
+        $('.statPreviewContainer').removeClass('gutterTop')
+        $('#avgText').show()
+    }
+}
 
 
 const fourPieceSets = [
