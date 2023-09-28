@@ -199,6 +199,8 @@ jQuery(document).ready(function($){
 
 
 function search(pop) {
+    $('.setCombos, .artifactCombos, .gsStats').hide();
+
     savedSetCombos = []
     name = $('#heroSelector0').select2('data')[0].text
     var id = $('#heroSelector0').select2('data')[0].id
