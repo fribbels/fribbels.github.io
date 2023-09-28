@@ -357,11 +357,10 @@
     height: 100%;
 }
 .heroBannerContainer {
-    height: 260px;
+    height: 17.5rem;
     width: 420px;
     min-width: 420px;
     overflow: clip;
-
 }
 .heroArtifact {
     position: relative;
@@ -458,8 +457,8 @@
 .setCombos, .artifactCombos, .gsStats {
   display: none;
 }
-.setCombos, .artifactCombos, .gsStats, .statPreviewContainer {
-  margin-top: 0.625rem;
+.gutterTop {
+  margin-top: 1.23rem;
 }
 .setCombos {
     padding: 0 2.5rem;
@@ -505,8 +504,13 @@
 #myGrid {
   height: 37rem;
   width: 77rem;
-  margin-bottom: 4.25rem;
+  margin-bottom: 2.875rem;
 }
 .setCombos, .statPreviewContainer, .artifactCombos {
   border-right: 1px solid rgba(66, 66, 66, 0.5);
+}
+#avgText {
+  display: none;
+  text-align: center;
+  margin-top: 1px;
 }

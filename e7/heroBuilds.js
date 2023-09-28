@@ -153,6 +153,9 @@ var gridOptions = {
     $('#setBefore').html(renderSets(before.sets, false, "heroBannerSetIcon"));
     // $("#heroArtifact").show()
     $('#heroArtifact').css('opacity', '1')
+
+    $('.statPreviewContainer').addClass('gutterTop')
+    $('#avgText').hide()
  }
 };
 
@@ -200,6 +203,9 @@ jQuery(document).ready(function($){
 
 function search(pop) {
     $('.setCombos, .artifactCombos, .gsStats').hide();
+    $('.statPreviewContainer').addClass('gutterTop')
+    $('#avgText').hide()
+
 
     savedSetCombos = []
     name = $('#heroSelector0').select2('data')[0].text
@@ -253,6 +259,16 @@ function search(pop) {
             gridOptions.api.onFilterChanged()
             data = JSON.parse(data)
 
+            let totalAtk = 0;
+            let totalDef = 0;
+            let totalHP = 0;
+            let totalCHC = 0;
+            let totalCHD = 0;
+            let totalEff = 0;
+            let totalEfr = 0;
+            let totalSpd = 0;
+            let totalGS = 0;
+
             var setCombos = {
             }
             var artifactCombos = {
@@ -260,13 +276,21 @@ function search(pop) {
             var rank = 1;
             for (row of data.data) {
                 row.atk = parseInt(row.atk)
+                totalAtk += row.atk;
                 row.def = parseInt(row.def)
+                totalDef += row.def;
                 row.hp = parseInt(row.hp)
+                totalHP += row.hp;
                 row.chc = parseInt(row.chc)
+                totalCHC += row.chc;
                 row.chd = parseInt(row.chd)
+                totalCHD += row.chd;
                 row.eff = parseInt(row.eff)
+                totalEff += row.eff;
                 row.efr = parseInt(row.efr)
+                totalEfr += row.efr;
                 row.spd = parseInt(row.spd)
+                totalSpd += row.spd;
 
                 var critRate;
                 if (row.chc > 100) {
@@ -368,6 +392,7 @@ function search(pop) {
                 }
 
                 row.gs = Math.ceil(row.gs - Math.max(0, row.chc - 100)*1.6 - Math.max(0, row.chd - 350)*1.14)
+                totalGS += row.gs
                 bs = bsStats.hp + bsStats.atk + bsStats.def + bsStats.eff + bsStats.res + bsStats.chc * 1.6 + bsStats.chd * 1.14 + bsStats.spd * 2
                 row.bs = Math.floor(bs)
 
@@ -387,6 +412,32 @@ function search(pop) {
         // final int dmgd = (int) ((critDamage * def) * rageMultiplier * penMultiplier * torrentMultiplier);
 
             }
+
+            if (data.data.length) {
+                const avgAtk = totalAtk / data.data.length;
+                const avgDef = totalDef / data.data.length;
+                const avgHP  = totalHP / data.data.length;
+                const avgCHC = totalCHC / data.data.length;
+                const avgCHD = totalCHD / data.data.length;
+                const avgEff = totalEff / data.data.length;
+                const avgEfr = totalEfr / data.data.length;
+                const avgSpd = totalSpd / data.data.length;
+                const avgGS = totalGS / data.data.length;
+
+                $('#atkStatBefore').text(avgAtk.toFixed(0))
+                $('#defStatBefore').text(avgDef.toFixed(0))
+                $('#hpStatBefore').text(avgHP.toFixed(0))
+                $('#spdStatBefore').text(avgSpd.toFixed(0))
+                $('#crStatBefore').text(avgCHC.toFixed(0))
+                $('#cdStatBefore').text(avgCHD.toFixed(0))
+                $('#effStatBefore').text(avgEff.toFixed(0))
+                $('#resStatBefore').text(avgEfr.toFixed(0))
+                $('#gsStatBefore').text(avgGS.toFixed(0))
+
+                $('.statPreviewContainer').removeClass('gutterTop')
+                $('#avgText').show()
+            }
+            
 
             console.log(data)
 
