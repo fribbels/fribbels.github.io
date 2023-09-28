@@ -449,7 +449,7 @@
     border-radius: 5px;
     background-color: rgba(30, 144, 255, 0.5);
 }
-.setComboRow:hover {
+.setComboRow:hover,.artifactComboRow:hover, .gsRow:hover {
     border: 0px solid;
     border-radius: 5px;
     background-color: #454545;
