@@ -444,7 +444,7 @@
     justify-content: flex-end;
     padding-left: 10px;
 }
-.setComboRow.active {
+.setComboRow.active, .artifactComboRow.active, .gsRow.active {
     border: 0px solid;
     border-radius: 5px;
     background-color: rgba(30, 144, 255, 0.5);
@@ -479,10 +479,11 @@
     margin-bottom: auto;
     margin-right: 10px;
 }
-.artifactComboRow {
+.artifactComboRow, .gsRow {
     display: flex;
     flex-direction: row;
     justify-content: start;
+    cursor: pointer;
 }
 .setArtifactRowLeft {
     margin-top: auto;
@@ -493,13 +494,16 @@
     width: 70px;
     justify-content: end;
 }
-.setArtifactRowRight {
+.setArtifactRowRight, .gsRowRight {
     margin-top: auto;
     margin-bottom: auto;
     width: 200px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+}
+.gsRowRight {
+  width: 4.3rem;
 }
 #myGrid {
   height: 37rem;

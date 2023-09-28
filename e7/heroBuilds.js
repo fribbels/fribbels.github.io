@@ -24,6 +24,8 @@ var idsByName = null;
 
 var filters = {
     setFilter: null,
+    artifactFilter: null,
+    gsFilter: null
 }
 
 let totalAtk = 0;
@@ -430,20 +432,26 @@ function search(pop) {
             var len = data.data.length;
 
             var intervals = [1, 3, 5, 10, 20, 30, 40, 50, 75];
+            let gsCutoffs = []
             var gsHtml = ""
+            let index = 0;
             for (var i of intervals) {
+                let gsCutoff = data.data[Math.floor(len  * i / 100)].gs;
+                gsCutoffs.push(gsCutoff);
                 gsHtml += `
-                <div class="statPreviewRow artifactComboRow">
+                <div class="statPreviewRow gsRow gsRow${index}" id="gsRow${index}">
                     <div class="setArtifactRowLeft">
                         ${"" + i + "% "}
                     </div>
-                    <div class="setArtifactRowRight">
-                        ${data.data[Math.floor(len  * i / 100)].gs + " gs"}
+                    <div class="gsRowRight">
+                        ${gsCutoff + " gs"}
                     </div>
                 </div>
                 `;
+                index++;
             }
             $("#gsStats").html(gsHtml)
+            index = 0;
             // 9
 
             aggregateCurrentHeroStats(data.data)
@@ -483,7 +491,7 @@ function search(pop) {
                 var html = artifactsById[combo[0]] || "?"
                 var artifactComboText = (combo[1].length / data.data.length * 100).toFixed(1) + "%";
                 artifactComboHtml += `
-                <div class="statPreviewRow artifactComboRow">
+                <div class="statPreviewRow artifactComboRow artifactComboRow${index}" id="artifactComboRow${index}"">
                     <div class="setArtifactRowLeft">
                         ${artifactComboText}
                     </div>
@@ -492,7 +500,9 @@ function search(pop) {
                     </div>
                 </div>
                 `;
+                index++;
             }
+            index = 0;
             $("#artifactCombos").html(artifactComboHtml)
 
             for (let i = 0; i < count; i++) {
@@ -500,35 +510,46 @@ function search(pop) {
                     $(`.setComboRow:not(#setComboRow${i})`).removeClass('active')
                     $(`#setComboRow${i}`).toggleClass('active')
 
-                    gridOptions.api.setIsExternalFilterPresent(() => {
-                        return true;
-                    })
-
-                    if (currentIndex == i) {
-                        currentIndex = -1
-                        gridOptions.api.setDoesExternalFilterPass((row) => { return true })
+                    const selectedFilter = JSON.parse(savedSetCombos[i][0]);
+                    if (objectsAreEqual(selectedFilter, filters.setFilter)) {
+                        filters.setFilter = null;
                     } else {
-                        currentIndex = i
-                        gridOptions.api.setDoesExternalFilterPass((row) => {
-                            var filter = JSON.parse(savedSetCombos[i][0])
-                            var rowSets = row.data.sets;
-                            // console.warn(JSON.stringify(sets))
-                            // console.warn(Object.entries(row.data.sets))
-
-                            for (let entry of Object.entries(filter)) {
-                                if ((rowSets[entry[0]] || 0) < parseInt(entry[1])) {
-                                    return false;
-                                } else {
-                                }
-                            }
-                            return true
-                        })
+                        filters.setFilter = selectedFilter;
                     }
-
-                    gridOptions.api.onFilterChanged()
-                    updateAverages(0, true)
+                    filterBuilds();
                 })
             }
+
+            for (let i = 0; i < sortedArtifactCombos.length; i++) {
+                $(`#artifactCombos`).on('click', `#artifactComboRow${i}`, (x) => {
+                    $(`.artifactComboRow:not(#artifactComboRow${i})`).removeClass('active')
+                    $(`#artifactComboRow${i}`).toggleClass('active')
+
+                    const selectedFilter = sortedArtifactCombos[i][0];
+                    if (selectedFilter === filters.artifactFilter) {
+                        filters.artifactFilter = null;
+                    } else {
+                        filters.artifactFilter = selectedFilter;
+                    }
+                    filterBuilds();
+                })
+            }
+
+            for (let i = 0; i < intervals.length; i++) {
+                $(`#gsStats`).on('click', `#gsRow${i}`, (x) => {
+                    $(`.gsRow:not(#gsRow${i})`).removeClass('active')
+                    $(`#gsRow${i}`).toggleClass('active')
+
+                    const selectedFilter = gsCutoffs[i];
+                    if (selectedFilter === filters.gsFilter) {
+                        filters.gsFilter = null;
+                    } else {
+                        filters.gsFilter = gsCutoffs[i];
+                    }
+                    filterBuilds();
+                })
+            }
+
             $('.setCombos, .artifactCombos, .gsStats').show();
         }
     })
@@ -625,6 +646,61 @@ function checkReady() {
 
 }
 
+function filterBuilds() {
+    if (!!filters.artifactFilter || !!filters.gsFilter || !!filters.setFilter) {
+        gridOptions.api.setIsExternalFilterPresent(() => {
+            return true;
+        })
+
+        gridOptions.api.setDoesExternalFilterPass((row) => {
+            if (filters.setFilter) {
+                var rowSets = row.data.sets;
+                for (let entry of Object.entries(filters.setFilter)) {
+                    if ((rowSets[entry[0]] || 0) < parseInt(entry[1])) {
+                        return false;
+                    }
+                }
+            }
+
+            if (filters.artifactFilter) {
+                if (row.data.artifactCode !== filters.artifactFilter) {
+                    return false;
+                }
+            }
+
+            if (filters.gsFilter) {
+                if (row.data.gs < filters.gsFilter) {
+                    return false;
+                }
+            }
+            
+            return true
+        })
+    } else {
+        gridOptions.api.setIsExternalFilterPresent(() => {
+            return false;
+        })
+    }
+
+    gridOptions.api.onFilterChanged()
+    updateAverages(0)
+}
+
+function objectsAreEqual(a, b) {
+    try {
+        const aEntries = Object.entries(a);
+        for (let entry of aEntries) {
+            if (a[entry] !== b[entry]) {
+                return false;
+            }
+        }
+    
+        return Object.entries(b).length === aEntries.length;
+    } catch {
+        return false;
+    }
+}
+
 function resetStatTotals() {
     totalAtk = 0;
     totalDef = 0;
@@ -637,10 +713,10 @@ function resetStatTotals() {
     totalGS = 0;
 }
 
-function updateAverages(dataLength, recalculate=false) {
+function updateAverages(dataLength) {
     let length = dataLength;
 
-    if (recalculate) {
+    if (!!!length) {
         resetStatTotals();
 
         gridOptions.api.forEachNodeAfterFilter((node, index) => {
@@ -655,7 +731,6 @@ function updateAverages(dataLength, recalculate=false) {
         })
 
         length = gridOptions.api.getDisplayedRowCount();
-        console.log(length)
     }
 
     if (!!length) {
