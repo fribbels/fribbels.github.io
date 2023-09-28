@@ -670,16 +670,12 @@ function filterBuilds() {
                 }
             }
 
-            if (filters.artifactFilter) {
-                if (row.data.artifactCode !== filters.artifactFilter) {
-                    return false;
-                }
+            if (filters.artifactFilter && row.data.artifactCode !== filters.artifactFilter) {
+                return false;
             }
 
-            if (filters.gsFilter) {
-                if (row.data.gs < filters.gsFilter) {
-                    return false;
-                }
+            if (filters.gsFilter && row.data.gs < filters.gsFilter) {
+                return false;
             }
             
             return true
@@ -724,7 +720,7 @@ function resetStatTotals() {
 function updateAverages(dataLength) {
     let length = dataLength;
 
-    if (!!!length) {
+    if (!length) {
         resetStatTotals();
 
         gridOptions.api.forEachNodeAfterFilter((node, index) => {
