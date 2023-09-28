@@ -493,7 +493,7 @@ function search(pop) {
                     gridOptions.api.onFilterChanged()
                 })
             }
-
+            $('.setCombos, .artifactCombos, .gsStats').show();
         }
     })
 }

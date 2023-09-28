@@ -96,7 +96,7 @@
 }
 
 .defenseIcons {
-    display: flex;sir
+    display: flex;
     flex-direction: row;
 }
 
@@ -378,6 +378,7 @@
   display:flex;
   flex-direction: column;
   margin-left: 30px;
+  padding-right: 0.5rem;
 }
 .statPreviewRow {
   height: 25px;
@@ -454,6 +455,9 @@
     border-radius: 5px;
     background-color: #454545;
 }
+.setCombos, .artifactCombos, .gsStats {
+  display: none;
+}
 .setCombos, .artifactCombos, .gsStats, .statPreviewContainer {
   margin-top: 0.625rem;
 }
@@ -464,7 +468,7 @@
     margin-left: 20px;
 }
 .gsStats {
-    margin-left: 20px;
+    margin-left: 0.75rem;
 }
 .setComboRowImages {
     width: 100px;
