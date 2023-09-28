@@ -277,6 +277,11 @@ function search(pop) {
             }
             var artifactCombos = {
             }
+            filters = {
+                setFilter: null,
+                artifactFilter: null,
+                gsFilter: null
+            }
             var rank = 1;
             for (row of data.data) {
                 row.atk = parseInt(row.atk)
@@ -506,6 +511,7 @@ function search(pop) {
             $("#artifactCombos").html(artifactComboHtml)
 
             for (let i = 0; i < count; i++) {
+                $(`#setCombos`).off('click', `#setComboRow${i}`);
                 $(`#setCombos`).on('click', `#setComboRow${i}`, (x) => {
                     $(`.setComboRow:not(#setComboRow${i})`).removeClass('active')
                     $(`#setComboRow${i}`).toggleClass('active')
@@ -521,11 +527,13 @@ function search(pop) {
             }
 
             for (let i = 0; i < sortedArtifactCombos.length; i++) {
+                $(`#artifactCombos`).off('click', `#artifactComboRow${i}`);
                 $(`#artifactCombos`).on('click', `#artifactComboRow${i}`, (x) => {
                     $(`.artifactComboRow:not(#artifactComboRow${i})`).removeClass('active')
                     $(`#artifactComboRow${i}`).toggleClass('active')
 
                     const selectedFilter = sortedArtifactCombos[i][0];
+                    console.log(filters.artifactFilter)
                     if (selectedFilter === filters.artifactFilter) {
                         filters.artifactFilter = null;
                     } else {
@@ -536,6 +544,7 @@ function search(pop) {
             }
 
             for (let i = 0; i < intervals.length; i++) {
+                $(`#gsStats`).off('click', `#gsRow${i}`);
                 $(`#gsStats`).on('click', `#gsRow${i}`, (x) => {
                     $(`.gsRow:not(#gsRow${i})`).removeClass('active')
                     $(`#gsRow${i}`).toggleClass('active')
@@ -718,6 +727,7 @@ function updateAverages(dataLength) {
 
     if (!!!length) {
         resetStatTotals();
+        console.log('here?')
 
         gridOptions.api.forEachNodeAfterFilter((node, index) => {
             totalAtk += node.data.atk;
