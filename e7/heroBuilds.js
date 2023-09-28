@@ -728,6 +728,7 @@ function updateAverages(dataLength) {
             totalEff += node.data.eff;
             totalEfr += node.data.efr;
             totalSpd += node.data.spd;
+            totalGS += node.data.gs;
         })
 
         length = gridOptions.api.getDisplayedRowCount();
