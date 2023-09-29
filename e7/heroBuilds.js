@@ -24,7 +24,19 @@ var idsByName = null;
 
 var filters = {
     setFilter: null,
+    artifactFilter: null,
+    gsFilter: null
 }
+
+let totalAtk = 0;
+let totalDef = 0;
+let totalHP = 0;
+let totalCHC = 0;
+let totalCHD = 0;
+let totalEff = 0;
+let totalEfr = 0;
+let totalSpd = 0;
+let totalGS = 0;
 
 const DIGITS_3 = 40;
 const DIGITS_4 = 47;
@@ -153,6 +165,9 @@ var gridOptions = {
     $('#setBefore').html(renderSets(before.sets, false, "heroBannerSetIcon"));
     // $("#heroArtifact").show()
     $('#heroArtifact').css('opacity', '1')
+
+    $('.statPreviewContainer').addClass('gutterTop')
+    $('#avgText').hide()
  }
 };
 
@@ -199,6 +214,11 @@ jQuery(document).ready(function($){
 
 
 function search(pop) {
+    $('.setCombos, .artifactCombos, .gsStats').hide();
+    $('.statPreviewContainer').addClass('gutterTop')
+    $('#avgText').hide()
+
+
     savedSetCombos = []
     name = $('#heroSelector0').select2('data')[0].text
     var id = $('#heroSelector0').select2('data')[0].id
@@ -251,20 +271,35 @@ function search(pop) {
             gridOptions.api.onFilterChanged()
             data = JSON.parse(data)
 
+            resetStatTotals();
+
             var setCombos = {
             }
             var artifactCombos = {
             }
+            filters = {
+                setFilter: null,
+                artifactFilter: null,
+                gsFilter: null
+            }
             var rank = 1;
             for (row of data.data) {
                 row.atk = parseInt(row.atk)
+                totalAtk += row.atk;
                 row.def = parseInt(row.def)
+                totalDef += row.def;
                 row.hp = parseInt(row.hp)
+                totalHP += row.hp;
                 row.chc = parseInt(row.chc)
+                totalCHC += row.chc;
                 row.chd = parseInt(row.chd)
+                totalCHD += row.chd;
                 row.eff = parseInt(row.eff)
+                totalEff += row.eff;
                 row.efr = parseInt(row.efr)
+                totalEfr += row.efr;
                 row.spd = parseInt(row.spd)
+                totalSpd += row.spd;
 
                 var critRate;
                 if (row.chc > 100) {
@@ -366,6 +401,7 @@ function search(pop) {
                 }
 
                 row.gs = Math.ceil(row.gs - Math.max(0, row.chc - 100)*1.6 - Math.max(0, row.chd - 350)*1.14)
+                totalGS += row.gs
                 bs = bsStats.hp + bsStats.atk + bsStats.def + bsStats.eff + bsStats.res + bsStats.chc * 1.6 + bsStats.chd * 1.14 + bsStats.spd * 2
                 row.bs = Math.floor(bs)
 
@@ -386,6 +422,11 @@ function search(pop) {
 
             }
 
+            if (data.data.length) {
+                updateAverages(data.data.length);
+            }
+            
+
             console.log(data)
 
             data.data = data.data.filter(x => !x.invalid).sort((x,y) => y.gs-x.gs)
@@ -396,20 +437,26 @@ function search(pop) {
             var len = data.data.length;
 
             var intervals = [1, 3, 5, 10, 20, 30, 40, 50, 75];
+            let gsCutoffs = []
             var gsHtml = ""
+            let index = 0;
             for (var i of intervals) {
+                let gsCutoff = data.data[Math.floor(len  * i / 100)].gs;
+                gsCutoffs.push(gsCutoff);
                 gsHtml += `
-                <div class="statPreviewRow artifactComboRow">
+                <div class="statPreviewRow gsRow gsRow${index}" id="gsRow${index}">
                     <div class="setArtifactRowLeft">
                         ${"" + i + "% "}
                     </div>
-                    <div class="setArtifactRowRight">
-                        ${data.data[Math.floor(len  * i / 100)].gs + " gs"}
+                    <div class="gsRowRight">
+                        ${gsCutoff + " gs"}
                     </div>
                 </div>
                 `;
+                index++;
             }
             $("#gsStats").html(gsHtml)
+            index = 0;
             // 9
 
             aggregateCurrentHeroStats(data.data)
@@ -449,7 +496,7 @@ function search(pop) {
                 var html = artifactsById[combo[0]] || "?"
                 var artifactComboText = (combo[1].length / data.data.length * 100).toFixed(1) + "%";
                 artifactComboHtml += `
-                <div class="statPreviewRow artifactComboRow">
+                <div class="statPreviewRow artifactComboRow artifactComboRow${index}" id="artifactComboRow${index}"">
                     <div class="setArtifactRowLeft">
                         ${artifactComboText}
                     </div>
@@ -458,40 +505,60 @@ function search(pop) {
                     </div>
                 </div>
                 `;
+                index++;
             }
+            index = 0;
             $("#artifactCombos").html(artifactComboHtml)
 
             for (let i = 0; i < count; i++) {
+                $(`#setCombos`).off('click', `#setComboRow${i}`);
                 $(`#setCombos`).on('click', `#setComboRow${i}`, (x) => {
-                    gridOptions.api.setIsExternalFilterPresent(() => {
-                        return true;
-                    })
+                    $(`.setComboRow:not(#setComboRow${i})`).removeClass('active')
+                    $(`#setComboRow${i}`).toggleClass('active')
 
-                    if (currentIndex == i) {
-                        currentIndex = -1
-                        gridOptions.api.setDoesExternalFilterPass((row) => { return true })
+                    const selectedFilter = JSON.parse(savedSetCombos[i][0]);
+                    if (objectsAreEqual(selectedFilter, filters.setFilter)) {
+                        filters.setFilter = null;
                     } else {
-                        currentIndex = i
-                        gridOptions.api.setDoesExternalFilterPass((row) => {
-                            var filter = JSON.parse(savedSetCombos[i][0])
-                            var rowSets = row.data.sets;
-                            // console.warn(JSON.stringify(sets))
-                            // console.warn(Object.entries(row.data.sets))
-
-                            for (let entry of Object.entries(filter)) {
-                                if ((rowSets[entry[0]] || 0) < parseInt(entry[1])) {
-                                    return false;
-                                } else {
-                                }
-                            }
-                            return true
-                        })
+                        filters.setFilter = selectedFilter;
                     }
-
-                    gridOptions.api.onFilterChanged()
+                    filterBuilds();
                 })
             }
 
+            for (let i = 0; i < sortedArtifactCombos.length; i++) {
+                $(`#artifactCombos`).off('click', `#artifactComboRow${i}`);
+                $(`#artifactCombos`).on('click', `#artifactComboRow${i}`, (x) => {
+                    $(`.artifactComboRow:not(#artifactComboRow${i})`).removeClass('active')
+                    $(`#artifactComboRow${i}`).toggleClass('active')
+
+                    const selectedFilter = sortedArtifactCombos[i][0];
+                    if (selectedFilter === filters.artifactFilter) {
+                        filters.artifactFilter = null;
+                    } else {
+                        filters.artifactFilter = selectedFilter;
+                    }
+                    filterBuilds();
+                })
+            }
+
+            for (let i = 0; i < intervals.length; i++) {
+                $(`#gsStats`).off('click', `#gsRow${i}`);
+                $(`#gsStats`).on('click', `#gsRow${i}`, (x) => {
+                    $(`.gsRow:not(#gsRow${i})`).removeClass('active')
+                    $(`#gsRow${i}`).toggleClass('active')
+
+                    const selectedFilter = gsCutoffs[i];
+                    if (selectedFilter === filters.gsFilter) {
+                        filters.gsFilter = null;
+                    } else {
+                        filters.gsFilter = gsCutoffs[i];
+                    }
+                    filterBuilds();
+                })
+            }
+
+            $('.setCombos, .artifactCombos, .gsStats').show();
         }
     })
 }
@@ -587,6 +654,115 @@ function checkReady() {
 
 }
 
+function filterBuilds() {
+    if (!!filters.artifactFilter || !!filters.gsFilter || !!filters.setFilter) {
+        gridOptions.api.setIsExternalFilterPresent(() => {
+            return true;
+        })
+
+        gridOptions.api.setDoesExternalFilterPass((row) => {
+            if (filters.setFilter) {
+                var rowSets = row.data.sets;
+                for (let entry of Object.entries(filters.setFilter)) {
+                    if ((rowSets[entry[0]] || 0) < parseInt(entry[1])) {
+                        return false;
+                    }
+                }
+            }
+
+            if (filters.artifactFilter && row.data.artifactCode !== filters.artifactFilter) {
+                return false;
+            }
+
+            if (filters.gsFilter && row.data.gs < filters.gsFilter) {
+                return false;
+            }
+            
+            return true
+        })
+    } else {
+        gridOptions.api.setIsExternalFilterPresent(() => {
+            return false;
+        })
+    }
+
+    gridOptions.api.onFilterChanged()
+    updateAverages(0)
+}
+
+function objectsAreEqual(a, b) {
+    try {
+        const aEntries = Object.entries(a);
+        for (let entry of aEntries) {
+            if (a[entry] !== b[entry]) {
+                return false;
+            }
+        }
+    
+        return Object.entries(b).length === aEntries.length;
+    } catch {
+        return false;
+    }
+}
+
+function resetStatTotals() {
+    totalAtk = 0;
+    totalDef = 0;
+    totalHP = 0;
+    totalCHC = 0;
+    totalCHD = 0;
+    totalEff = 0;
+    totalEfr = 0;
+    totalSpd = 0;
+    totalGS = 0;
+}
+
+function updateAverages(dataLength) {
+    let length = dataLength;
+
+    if (!length) {
+        resetStatTotals();
+
+        gridOptions.api.forEachNodeAfterFilter((node, index) => {
+            totalAtk += node.data.atk;
+            totalDef += node.data.def;
+            totalHP += node.data.hp;
+            totalCHC += node.data.chc;
+            totalCHD += node.data.chd;
+            totalEff += node.data.eff;
+            totalEfr += node.data.efr;
+            totalSpd += node.data.spd;
+            totalGS += node.data.gs;
+        })
+
+        length = gridOptions.api.getDisplayedRowCount();
+    }
+
+    if (!!length) {
+        const avgAtk = totalAtk / length;
+        const avgDef = totalDef / length;
+        const avgHP  = totalHP / length;
+        const avgCHC = totalCHC / length;
+        const avgCHD = totalCHD / length;
+        const avgEff = totalEff / length;
+        const avgEfr = totalEfr / length;
+        const avgSpd = totalSpd / length;
+        const avgGS = totalGS / length;
+
+        $('#atkStatBefore').text(avgAtk.toFixed(0))
+        $('#defStatBefore').text(avgDef.toFixed(0))
+        $('#hpStatBefore').text(avgHP.toFixed(0))
+        $('#spdStatBefore').text(avgSpd.toFixed(0))
+        $('#crStatBefore').text(avgCHC.toFixed(0))
+        $('#cdStatBefore').text(avgCHD.toFixed(0))
+        $('#effStatBefore').text(avgEff.toFixed(0))
+        $('#resStatBefore').text(avgEfr.toFixed(0))
+        $('#gsStatBefore').text(avgGS.toFixed(0))
+
+        $('.statPreviewContainer').removeClass('gutterTop')
+        $('#avgText').show()
+    }
+}
 
 
 const fourPieceSets = [
