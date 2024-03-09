@@ -173,7 +173,7 @@ function showMeta() {
             var offenses = Object.entries(json.offenseData)
             var totalSize = json.totalSize
 
-            $('#intro').html(`This app tracks data from ${totalSize.toLocaleString("en-US")} attacks from top 30 ranked guild wars. Latest update: ${new Date(json.maxTimestamp*1000).toDateString()}.`)
+            $('#intro').html(`This app tracks data from ${totalSize.toLocaleString("en-US")} attacks from top 50 ranked guild wars. Latest update: ${new Date(json.maxTimestamp*1000).toDateString()}.`)
 
             if (urlParams) {
                 return;
@@ -182,7 +182,7 @@ function showMeta() {
             defenses.sort((a, b) => (b.w+b.l) - (a.w+a.l))
             offenses.sort((a, b) => (b[1].w+b[1].l) - (a[1].w+a[1].l))
 
-            var html = "</br></br><h2>Top 50 most common meta defenses in past 3 weeks</h2>";
+            var html = "</br></br><h2>Top 50 most common meta defenses in past 4 weeks</h2>";
             for (var i = 0; i < 50; i++) {
                 var defense = defenses[i];
                 var percent = (defense.w/(defense.l + defense.w) * 100).toFixed(1);
@@ -217,9 +217,9 @@ function showMeta() {
 `
             }
 
-            html += "</br></br><h2>Top 30 most common meta offense units in past 3 weeks</h2>"
+            html += "</br></br><h2>Top 50 most common meta offense units in past 3 weeks</h2>"
 
-            for (var i = 0; i < 30; i++) {
+            for (var i = 0; i < 50; i++) {
                 var offenseName = offenses[i][0];
                 var offenseWL = offenses[i][1];
                 var percent = (offenseWL.w/(offenseWL.l + offenseWL.w) * 100).toFixed(1);
