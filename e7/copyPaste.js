@@ -217,7 +217,7 @@ function showMeta() {
 `
             }
 
-            html += "</br></br><h2>Top 50 most common meta offense units in past 3 weeks</h2>"
+            html += "</br></br><h2>Top 50 most common meta offense units in past 4 weeks</h2>"
 
             for (var i = 0; i < 50; i++) {
                 var offenseName = offenses[i][0];
