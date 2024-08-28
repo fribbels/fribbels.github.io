@@ -139,10 +139,11 @@ jQuery(document).ready(function($){
             console.error("Url parsing failed", e);
         }
 
-
-
         loadedHeroData = true;
         checkReady();
+    }).catch((e) => {
+        console.log(e)
+        $('#metaRows').html("</br></br></br>No data for recent guild wars")
     })
 
 });
