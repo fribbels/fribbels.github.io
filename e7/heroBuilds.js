@@ -436,6 +436,14 @@ function search(pop) {
 
             var len = data.data.length;
 
+            if (len == 0) {
+                gridOptions.api.setRowData(data.data);
+                gridOptions.overlayNoRowsTemplate = 'No data for this hero yet, please check back later'
+                gridOptions.api.hideOverlay()
+                gridOptions.api.showNoRowsOverlay()
+                return
+            }
+
             var intervals = [1, 3, 5, 10, 20, 30, 40, 50, 75];
             let gsCutoffs = []
             var gsHtml = ""
