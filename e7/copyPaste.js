@@ -161,7 +161,7 @@ function showMeta() {
     var urlParams = new URLSearchParams(queryString).get('def');
 
     $.ajax({
-        url: dev ? "http://127.0.0.1:5000/getMeta" : "https://krivpfvxi0.execute-api.us-west-2.amazonaws.com/dev/getMeta",
+        url: dev ? "http://127.0.0.1:5000/getMeta" : "https://z4tfy2r5kc.execute-api.us-west-2.amazonaws.com/dev/getMeta",
         //force to handle it as text
         dataType: "text",
         type: "POST",
@@ -288,7 +288,7 @@ function search() {
     window.history.replaceState(null, null, "?def=" + names);
 
     $.ajax({
-        url: dev ? "http://127.0.0.1:5000/getDef" : "https://krivpfvxi0.execute-api.us-west-2.amazonaws.com/dev/getDef",
+        url: dev ? "http://127.0.0.1:5000/getDef" : "https://z4tfy2r5kc.execute-api.us-west-2.amazonaws.com/dev/getDef",
         //force to handle it as text
         dataType: "text",
         type: "POST",
@@ -425,7 +425,7 @@ function buildDefSearch() {
 
 
     $.ajax({
-        url: dev ? "http://127.0.0.1:5000/buildDef" : "https://krivpfvxi0.execute-api.us-west-2.amazonaws.com/dev/buildDef",
+        url: dev ? "http://127.0.0.1:5000/buildDef" : "https://z4tfy2r5kc.execute-api.us-west-2.amazonaws.com/dev/buildDef",
         //force to handle it as text
         dataType: "text",
         type: "POST",
