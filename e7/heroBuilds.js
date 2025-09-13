@@ -386,6 +386,7 @@ function search(pop) {
                 var bonusSetTorrent = (fullSets.set_torrent || 0)/2 * -10
                 var bonusSetRevenge = (fullSets.set_revenge || 0)/4 * Math.floor(0.12 * baseSpd)
                 var bonusSetSpeed = (fullSets.set_speed || 0)/4 * Math.floor(0.25 * baseSpd)
+                var bonusSetRevenant = (fullSets.set_revenant || 0)/4 * Math.floor(0.15 * baseSpd)
 
                 // console.log(row)
 
@@ -397,7 +398,7 @@ function search(pop) {
                     chd: (Math.min(350, row.chd) - base.chd*100 - (base.overrideAdditionalCd || 0)*100 - bonusSetCriDmg),
                     eff: (row.eff - base.eff*100 - (base.overrideAdditionalEff || 0)*100 - bonusSetAcc),
                     res: (row.efr - base.efr*100 - (base.overrideAdditionalRes || 0)*100 - bonusSetRes),
-                    spd: (row.spd - baseSpd - bonusSetSpeed - bonusSetRevenge),
+                    spd: (row.spd - baseSpd - bonusSetSpeed - bonusSetRevenge - bonusSetRevenant),
                 }
 
                 row.gs = Math.ceil(row.gs - Math.max(0, row.chc - 100)*1.6 - Math.max(0, row.chd - 350)*1.14)
