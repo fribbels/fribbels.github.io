@@ -842,8 +842,8 @@ const assetsBySet = {
     "PenetrationSet": "./assets/setpenetration.png",
     "ProtectionSet": "./assets/setprotection.png",
     "TorrentSet": "./assets/settorrent.png",
-    "ReversalSet": "./assets/set_revenant.png",
-    "RiposteSet": "./assets/set_riposte.png",
+    "ReversalSet": "./assets/setrevenant.png",
+    "RiposteSet": "./assets/setriposte.png",
 }
 
 function renderSets(sets, reverse, iconClass) {
