@@ -794,6 +794,8 @@ const fourPieceSetsIngame = [
     "set_speed",
     "set_vampire",
     "set_shield",
+    "set_revenant",
+    "set_riposte",
 ]
 
 const ingameSetsToSetNames = {
@@ -814,7 +816,9 @@ const ingameSetsToSetNames = {
     "set_speed": "SpeedSet",
     "set_vampire": "LifestealSet",
     "set_shield": "ProtectionSet",
-    "set_torrent": "TorrentSet"
+    "set_torrent": "TorrentSet",
+    "set_revenant": "ReversalSet",
+    "set_riposte": "RiposteSet",
 }
 const assetsBySet = {
     "HealthSet": "./assets/sethealth.png",
