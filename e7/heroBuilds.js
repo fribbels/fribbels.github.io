@@ -783,7 +783,9 @@ const fourPieceSets = [
     "CounterSet",
     "RageSet",
     "RevengeSet",
-    "InjurySet"
+    "InjurySet",
+    "ReversalSet",
+    "RiposteSet",
 ]
 const fourPieceSetsIngame = [
     "set_att",
