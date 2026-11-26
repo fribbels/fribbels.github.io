@@ -786,6 +786,8 @@ const fourPieceSets = [
     "InjurySet",
     "ReversalSet",
     "RiposteSet",
+    "WarfareSet",
+    "WeakeningSet",
 ]
 const fourPieceSetsIngame = [
     "set_att",
@@ -799,6 +801,8 @@ const fourPieceSetsIngame = [
     "set_shield",
     "set_revenant",
     "set_riposte",
+    "set_opener",
+    "set_weak",
 ]
 
 const ingameSetsToSetNames = {
@@ -822,6 +826,10 @@ const ingameSetsToSetNames = {
     "set_torrent": "TorrentSet",
     "set_revenant": "ReversalSet",
     "set_riposte": "RiposteSet",
+    "set_opener": "WarfareSet",
+    "set_chase": "PursuitSet",
+    "set_weak": "WeakeningSet",
+    "set_might": "FervorSet",
 }
 const assetsBySet = {
     "HealthSet": "./assets/sethealth.png",
@@ -844,6 +852,10 @@ const assetsBySet = {
     "TorrentSet": "./assets/settorrent.png",
     "ReversalSet": "./assets/setrevenant.png",
     "RiposteSet": "./assets/setriposte.png",
+    "WarfareSet": "./assets/setwarfare.png",
+    "PursuitSet": "./assets/setpursuit.png",
+    "WeakeningSet": "./assets/setweakening.png",
+    "FervorSet": "./assets/setfervor.png",
 }
 
 function renderSets(sets, reverse, iconClass) {
